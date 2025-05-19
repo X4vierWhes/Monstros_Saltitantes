@@ -57,10 +57,13 @@ class BallPanel extends JPanel {
         groundY = height - BALL_SIZE - 40;
     }
 
+
+
     public void addBall(int posX) {
         Random rand = new Random();
-        int spdX = rand.nextBoolean() ? 3 : -3;
-        balls.add(new Ball(posX, groundY, spdX));
+        int spdX = rand.nextInt(7) - 3;
+        int spdY = rand.nextInt(7) - 3;
+        balls.add(new Ball(posX, groundY, spdX, spdY));
     }
 
     public void startTimer() {
@@ -103,9 +106,10 @@ class Ball {
     int spdY = 0;
     int spdX = 0;
 
-    Ball(int x, int y, int spdX) {
+    Ball(int x, int y, int spdX, int spdY) {
         this.x = x;
         this.y = y;
         this.spdX = spdX;
+        this.spdY = spdY;
     }
 }
