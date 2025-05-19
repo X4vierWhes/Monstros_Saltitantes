@@ -6,7 +6,6 @@ import java.util.Random;
 public class Screen {
     private static int width = 720;
     private static int height = 480;
-
     private JFrame frame;
     private BallPanel ballPanel;
 
@@ -59,7 +58,9 @@ class BallPanel extends JPanel {
     }
 
     public void addBall(int posX) {
-        balls.add(new Ball(posX, groundY));
+        Random rand = new Random();
+        int spdX = rand.nextBoolean() ? 3 : -3;
+        balls.add(new Ball(posX, groundY, spdX));
     }
 
     public void startTimer() {
@@ -71,10 +72,18 @@ class BallPanel extends JPanel {
         for (Ball ball : balls) {
             ball.spdY += grav;
             ball.y += ball.spdY;
+            ball.x += ball.spdX;
+
+            if(ball.x < 0 || ball.x >= getWidth() - BALL_SIZE){
+                ball.spdX *= -1;
+            }
+
             if (ball.y >= groundY) {
                 ball.y = groundY;
                 ball.spdY = jumpForce;
             }
+
+
         }
         repaint();
     }
@@ -92,9 +101,11 @@ class BallPanel extends JPanel {
 class Ball {
     int x, y;
     int spdY = 0;
+    int spdX = 0;
 
-    Ball(int x, int y) {
+    Ball(int x, int y, int spdX) {
         this.x = x;
         this.y = y;
+        this.spdX = spdX;
     }
 }
