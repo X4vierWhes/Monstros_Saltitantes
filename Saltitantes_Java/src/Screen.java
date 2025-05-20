@@ -8,6 +8,7 @@ public class Screen {
     private static int height = 480;
     private JFrame frame;
     private BallPanel ballPanel;
+    private Random rand = new Random();
 
     public void initScreen() {
         frame = new JFrame("Saltitantes");
@@ -21,7 +22,7 @@ public class Screen {
         addButton();
 
         frame.setVisible(true);
-        ballPanel.startTimer();
+        ballPanel.startPhisycsTimer();
     }
 
     private void addButton() {
@@ -35,7 +36,6 @@ public class Screen {
     }
 
     private void addBallInRandomPos() {
-        Random rand = new Random();
         int randomX = rand.nextInt(width - BallPanel.BALL_SIZE);
         ballPanel.addBall(randomX);
     }
@@ -46,10 +46,13 @@ class BallPanel extends JPanel {
     private final int groundY;
 
     private final ArrayList<Ball> balls = new ArrayList<>();
-    private Timer timer;
+    private Timer phisycsTimer;
+    private Timer updateTimer;
 
-    private final int grav = 1;
-    private final int jumpForce = -15;
+    private final float grav = 1.0f;
+    private final int jumpForce = -25;
+
+    private Random rand = new Random();
 
     BallPanel(int width, int height) {
         setBackground(Color.BLACK);
@@ -57,27 +60,45 @@ class BallPanel extends JPanel {
         groundY = height - BALL_SIZE - 40;
     }
 
-
-
     public void addBall(int posX) {
-        Random rand = new Random();
-        int spdX = rand.nextInt(7) - 3;
-        int spdY = rand.nextInt(7) - 3;
+        int spdX = rand.nextInt(6) - 3;
+        int spdY = rand.nextInt(6) - 3;
         balls.add(new Ball(posX, groundY, spdX, spdY));
     }
 
-    public void startTimer() {
-        timer = new Timer(16, e -> update());
-        timer.start();
+    public void startUpdateTimer(){
+        updateTimer = new Timer(16, e -> update());
+        updateTimer.start();
     }
 
-    private void update() {
+    public void stopUpdateTimer(){
+        if (updateTimer.isRunning()) {
+            updateTimer.stop();
+        }
+    }
+
+    public void startPhisycsTimer() {
+        phisycsTimer = new Timer(16, e -> phisycsUpdate());
+        phisycsTimer.start();
+    }
+
+    public void stopPhisycsTimer() {
+        if (phisycsTimer.isRunning()) {
+            phisycsTimer.stop();
+        }
+    }
+
+    private void update(){
+
+    }
+
+    private void phisycsUpdate() {
         for (Ball ball : balls) {
             ball.spdY += grav;
             ball.y += ball.spdY;
             ball.x += ball.spdX;
 
-            if(ball.x < 0 || ball.x >= getWidth() - BALL_SIZE){
+            if (ball.x < 0 || ball.x >= getWidth() - BALL_SIZE) {
                 ball.spdX *= -1;
             }
 
@@ -85,8 +106,6 @@ class BallPanel extends JPanel {
                 ball.y = groundY;
                 ball.spdY = jumpForce;
             }
-
-
         }
         repaint();
     }
@@ -105,6 +124,9 @@ class Ball {
     int x, y;
     int spdY = 0;
     int spdX = 0;
+    double money = 1000000.0;
+    boolean canMove = false;
+    int target = 0;
 
     Ball(int x, int y, int spdX, int spdY) {
         this.x = x;
