@@ -66,11 +66,21 @@ class BallPanel extends JPanel {
     public void addBall(int posX) {
         int spdX = 1; //rand.nextInt(6) - 3;
         int spdY = rand.nextInt(6) - 3;
-        balls.add(new Ball(posX, groundY, spdX, spdY));
+
+        JLabel label = new JLabel();
+        label.setForeground(Color.WHITE);
+        label.setBounds(posX, groundY - 20, BALL_SIZE, 20);
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+
+        balls.add(new Ball(posX, groundY, spdX, spdY, label));
+        label.setText("R$ " + (balls.getLast().money / 100.0));
+        balls.getLast().x = calcNextPosition(balls.getLast());
+        this.add(label);
+        this.setComponentZOrder(label, 0);
     }
 
     public void startUpdateTimer(){
-        updateTimer = new Timer(1500, e -> update());
+        updateTimer = new Timer(2500, e -> update());
         updateTimer.start();
     }
 
@@ -99,19 +109,64 @@ class BallPanel extends JPanel {
         balls.removeIf(ball -> ball.money < 0.0);
 
         for(Ball ball: balls){
-            if(ball.canTheft) {
-                ball.canMove = !ball.canMove;
+            if (ball.canTheft) {
+                thiefNeighbor(ball);
+                ball.canMove = true;
             }
         }
 
         canUpdate = !canUpdate;
 
     }
+    private boolean thiefNeighbor(Ball thief){
+        if (balls.size() <= 1) return false;
 
+        int closerIndex = 0;
+        int index = 0;
+        int closest_distance = getWidth() - BALL_SIZE;
+        int aux_distance = 0;
+
+        for(Ball neighbor: balls){
+            if(thief != neighbor){
+                if(thief.x >= neighbor.x){
+                    aux_distance = thief.x - neighbor.x;
+                }else{
+                    aux_distance = neighbor.x - thief.x;
+                }
+
+                if(aux_distance <= closest_distance){
+                    closest_distance = aux_distance;
+                    closerIndex = index;
+                }
+            }
+            index++;
+        }
+
+        thief.money += balls.get(closerIndex).money/2;
+        balls.get(closerIndex).money /= 2;
+        thief.target = calcNextPosition(thief);
+        balls.get(closerIndex).target = calcNextPosition(balls.get(closerIndex));
+
+        return true;
+    }
     private int calcNextPosition(Ball ball){
-        // x = x + r(randomico entre -1 e 1) * g(moedas)
-        // x normalizado = ((widht * height) / 1000000.0 - (-1000000.0))*(x - (-1000000.0));
-        return 719 - BALL_SIZE;
+        int minX = -1000000;
+        int maxX =  1000000;
+        int range = maxX - minX;
+
+        int rawTarget = calcTarget(ball);
+        double normalized = (double)(rawTarget - minX) / range;
+
+        int screenTarget = (int)(normalized * (getWidth() - BallPanel.BALL_SIZE));
+
+        screenTarget = Math.max(0, Math.min(screenTarget, getWidth() - BallPanel.BALL_SIZE));
+
+        System.out.println("Target: " + screenTarget);
+        return screenTarget;
+    }
+
+    private int calcTarget(Ball ball){
+        return ball.x + (rand.nextInt(2) - 1) * ball.money;
     }
 
     private void phisycsUpdate() {
@@ -126,29 +181,31 @@ class BallPanel extends JPanel {
                     ball.spdY = jumpForce;
                 }
                 //Atualizar o x quando a bola pode se mover
-                if (ball.canMove) {
-                    ball.target = calcNextPosition(ball);
+                if (ball.canMove && canUpdate) {
 
-                    if (ball.x == ball.target) {
+                    if (ball.x == ball.target) { //Nao ta funcionando direito
                         ball.canMove = false;
-                        ball.canTheft = true;
+                        ball.startTimer();
+
                     }
 
                     if(ball.x != ball.target){
                         ball.canTheft = false;
                     }
-                    //System.out.println(ball.target + " / " + ball.x);
 
                     if(ball.target > ball.x) {
                         ball.x += ball.spdX;
-                    }else {
+                    }else if(ball.target < ball.x) {
                         ball.x -= ball.spdX;
                     }
-                    System.out.println(getWidth());
-                    if (ball.x < 0 || ball.x >= getWidth() - BALL_SIZE) {
+                    //System.out.println(ball.target + " / " + ball.x);
+                    //System.out.println(getWidth() + " " + getHeight());
+                    if (ball.x < 0 || ball.x >= getWidth() - BALL_SIZE) { //Bola ta batendo pois getWidht ta dando um valor abaixo dos 720
                         ball.spdX *= -1;
                     }
                 }
+                ball.label.setText("R$ " + (ball.money / 100.0));
+                ball.label.setBounds(ball.x, ball.y - 20, BALL_SIZE, 20);
             }
         }
         repaint();
@@ -168,15 +225,38 @@ class Ball {
     int x, y;
     int spdY = 0;
     int spdX = 0;
-    double money = 1000000.0;
+    int money = 1000000;
     boolean canMove = false;
     boolean canTheft = true;
     int target = 0;
+    JLabel label;
+    Timer cooldown;
 
-    Ball(int x, int y, int spdX, int spdY) {
+    Ball(int x, int y, int spdX, int spdY, JLabel label) {
         this.x = x;
         this.y = y;
         this.spdX = spdX;
         this.spdY = spdY;
+        this.label = label;
+        cooldown = new Timer(6000, e ->
+                thiefTimer()
+        );
+    }
+
+    public void startTimer(){
+        if (!cooldown.isRunning()) {
+            canTheft = false;
+            cooldown.setRepeats(false);
+            cooldown.start();
+        }
+    }
+
+    public void thiefTimer(){
+        canTheft = true;
+        if(cooldown.isRunning()){
+            cooldown.stop();
+        }
     }
 }
+
+
