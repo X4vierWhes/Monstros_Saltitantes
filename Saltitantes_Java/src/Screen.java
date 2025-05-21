@@ -91,7 +91,7 @@ class BallPanel extends JPanel {
     }
 
     public void startPhisycsTimer() {
-        phisycsTimer = new Timer(10, e -> phisycsUpdate());
+        phisycsTimer = new Timer(1, e -> phisycsUpdate());
         phisycsTimer.start();
     }
 
@@ -146,7 +146,9 @@ class BallPanel extends JPanel {
         balls.get(closerIndex).money /= 2;
         thief.target = calcNextPosition(thief);
         balls.get(closerIndex).target = calcNextPosition(balls.get(closerIndex));
-
+        System.out.println(
+                "roubou"
+        );
         return true;
     }
     private int calcNextPosition(Ball ball){
@@ -154,19 +156,19 @@ class BallPanel extends JPanel {
         int maxX =  1000000;
         int range = maxX - minX;
 
-        int rawTarget = calcTarget(ball);
-        double normalized = (double)(rawTarget - minX) / range;
+        double rawTarget = calcTarget(ball);
+        double normalized = (rawTarget - minX) / range;
 
         int screenTarget = (int)(normalized * (getWidth() - BallPanel.BALL_SIZE));
 
         screenTarget = Math.max(0, Math.min(screenTarget, getWidth() - BallPanel.BALL_SIZE));
 
-        System.out.println("Target: " + screenTarget);
+        //System.out.println("Target: " + screenTarget);
         return screenTarget;
     }
 
-    private int calcTarget(Ball ball){
-        return ball.x + (rand.nextInt(2) - 1) * ball.money;
+    private double calcTarget(Ball ball){
+        return ball.x + (rand.nextDouble(2) - 1) * ball.money;
     }
 
     private void phisycsUpdate() {
@@ -198,7 +200,7 @@ class BallPanel extends JPanel {
                     }else if(ball.target < ball.x) {
                         ball.x -= ball.spdX;
                     }
-                    //System.out.println(ball.target + " / " + ball.x);
+                    System.out.println(ball.target + " / " + ball.x);
                     //System.out.println(getWidth() + " " + getHeight());
                     if (ball.x < 0 || ball.x >= getWidth() - BALL_SIZE) { //Bola ta batendo pois getWidht ta dando um valor abaixo dos 720
                         ball.spdX *= -1;
@@ -225,7 +227,7 @@ class Ball {
     int x, y;
     int spdY = 0;
     int spdX = 0;
-    int money = 1000000;
+    double money = 1000000;
     boolean canMove = false;
     boolean canTheft = true;
     int target = 0;
@@ -238,7 +240,7 @@ class Ball {
         this.spdX = spdX;
         this.spdY = spdY;
         this.label = label;
-        cooldown = new Timer(6000, e ->
+        cooldown = new Timer(3000, e ->
                 thiefTimer()
         );
     }
