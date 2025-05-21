@@ -23,6 +23,7 @@ public class Screen {
 
         frame.setVisible(true);
         ballPanel.startPhisycsTimer();
+        ballPanel.startUpdateTimer();
     }
 
     private void addButton() {
@@ -53,6 +54,8 @@ class BallPanel extends JPanel {
     private final int jumpForce = -25;
 
     private Random rand = new Random();
+    private int interacao = 0;
+    private boolean canUpdate = true;
 
     BallPanel(int width, int height) {
         setBackground(Color.BLACK);
@@ -61,13 +64,13 @@ class BallPanel extends JPanel {
     }
 
     public void addBall(int posX) {
-        int spdX = rand.nextInt(6) - 3;
+        int spdX = 1; //rand.nextInt(6) - 3;
         int spdY = rand.nextInt(6) - 3;
         balls.add(new Ball(posX, groundY, spdX, spdY));
     }
 
     public void startUpdateTimer(){
-        updateTimer = new Timer(16, e -> update());
+        updateTimer = new Timer(1500, e -> update());
         updateTimer.start();
     }
 
@@ -78,7 +81,7 @@ class BallPanel extends JPanel {
     }
 
     public void startPhisycsTimer() {
-        phisycsTimer = new Timer(16, e -> phisycsUpdate());
+        phisycsTimer = new Timer(10, e -> phisycsUpdate());
         phisycsTimer.start();
     }
 
@@ -89,22 +92,63 @@ class BallPanel extends JPanel {
     }
 
     private void update(){
+        interacao++;
+        System.out.println(interacao);
+        canUpdate = !canUpdate;
+
+        balls.removeIf(ball -> ball.money < 0.0);
+
+        for(Ball ball: balls){
+            if(ball.canTheft) {
+                ball.canMove = !ball.canMove;
+            }
+        }
+
+        canUpdate = !canUpdate;
 
     }
 
+    private int calcNextPosition(Ball ball){
+        // x = x + r(randomico entre -1 e 1) * g(moedas)
+        // x normalizado = ((widht * height) / 1000000.0 - (-1000000.0))*(x - (-1000000.0));
+        return 719 - BALL_SIZE;
+    }
+
     private void phisycsUpdate() {
-        for (Ball ball : balls) {
-            ball.spdY += grav;
-            ball.y += ball.spdY;
-            ball.x += ball.spdX;
+        if(canUpdate) {
+            for (Ball ball : balls) {
+                //Atualizar Y para sempre pular
+                ball.spdY += grav;
+                ball.y += ball.spdY;
 
-            if (ball.x < 0 || ball.x >= getWidth() - BALL_SIZE) {
-                ball.spdX *= -1;
-            }
+                if (ball.y >= groundY) {
+                    ball.y = groundY;
+                    ball.spdY = jumpForce;
+                }
+                //Atualizar o x quando a bola pode se mover
+                if (ball.canMove) {
+                    ball.target = calcNextPosition(ball);
 
-            if (ball.y >= groundY) {
-                ball.y = groundY;
-                ball.spdY = jumpForce;
+                    if (ball.x == ball.target) {
+                        ball.canMove = false;
+                        ball.canTheft = true;
+                    }
+
+                    if(ball.x != ball.target){
+                        ball.canTheft = false;
+                    }
+                    //System.out.println(ball.target + " / " + ball.x);
+
+                    if(ball.target > ball.x) {
+                        ball.x += ball.spdX;
+                    }else {
+                        ball.x -= ball.spdX;
+                    }
+                    System.out.println(getWidth());
+                    if (ball.x < 0 || ball.x >= getWidth() - BALL_SIZE) {
+                        ball.spdX *= -1;
+                    }
+                }
             }
         }
         repaint();
@@ -126,6 +170,7 @@ class Ball {
     int spdX = 0;
     double money = 1000000.0;
     boolean canMove = false;
+    boolean canTheft = true;
     int target = 0;
 
     Ball(int x, int y, int spdX, int spdY) {
