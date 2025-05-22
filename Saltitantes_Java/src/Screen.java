@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Random;
 
 public class Screen {
@@ -29,8 +28,10 @@ public class Screen {
     private void addButton() {
         JButton button = new JButton("ADD BALL");
         int buttonWidth = 100;
-        int buttonHeight = 50;
+        int buttonHeight = 25;
         button.setBounds(width - buttonWidth - 20, 10, buttonWidth, buttonHeight);
+        button.setBackground(Color.BLUE);
+        button.setForeground(Color.WHITE);
         ballPanel.add(button);
         ballPanel.setComponentZOrder(button, 0);
         button.addActionListener(e -> addBallInRandomPos());
