@@ -105,7 +105,7 @@ public class BallPanel extends JPanel {
      *
      * @return true se todas as bolas estão paradas, senão false.
      */
-    private boolean isCanUpdate() {
+    public boolean isCanUpdate() {
         for (Ball ball : balls) {
             if (ball.canMove) {
                 return false;
@@ -282,7 +282,7 @@ public class BallPanel extends JPanel {
      *
      * @return Largura em pixels.
      */
-    public int _getWidht() {
+    public int _getWidth() {
         return getWidth();
     }
 
@@ -291,8 +291,12 @@ public class BallPanel extends JPanel {
      *
      * @param remove Bola a ser removida.
      */
-    public void removeBall(Ball remove) {
+    public boolean removeBall(Ball remove) {
+        if (balls.size() <= 1){
+            return false;
+        }
         balls.remove(remove);
+        return true;
     }
 
     /**
@@ -301,6 +305,9 @@ public class BallPanel extends JPanel {
      * @return Última bola da lista.
      */
     public Ball getLast() {
+        if(balls.isEmpty()){
+            return null;
+        }
         return balls.getLast();
     }
 }

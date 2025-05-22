@@ -14,7 +14,7 @@ import javax.swing.*;
 public class Ball {
 
     /** Coordenada X da bola. */
-    int x;
+    public int x;
 
     /** Coordenada Y da bola. */
     int y;
@@ -29,7 +29,7 @@ public class Ball {
     public double money = 1000000;
 
     /** Indica se a bola pode se mover. */
-    boolean canMove = false;
+    public boolean canMove = false;
 
     /** Indica se a bola pode realizar roubo. */
     boolean canTheft = true;
