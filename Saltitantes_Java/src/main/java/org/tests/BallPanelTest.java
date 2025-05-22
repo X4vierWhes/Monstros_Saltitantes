@@ -6,6 +6,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.*;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,8 +44,13 @@ public class BallPanelTest {
      */
     @BeforeEach
     void setUp() {
+        JFrame frame = new JFrame();
+
         randi = new Random();
         panel = new BallPanel(width, height);
+        frame.add(panel);
+        frame.pack();
+        System.out.println(panel.getWidth());
         int posX = randi.nextInt(width - BallPanel.BALL_SIZE);
         panel.addBall(posX);
         target = panel.calcTarget(panel.getLast());
@@ -126,7 +132,7 @@ public class BallPanelTest {
     @Test
     void calcNextPositionTest() {
         int nextPosition = panel.calcNextPosition(panel.getLast());
-        assertTrue(nextPosition >= 0 && nextPosition <= panel._getWidth(),
+        assertTrue(nextPosition >= 0 && nextPosition <= panel.getWidth(),
                 "A próxima posição está fora dos limites do painel: " + nextPosition);
     }
 
@@ -154,7 +160,7 @@ public class BallPanelTest {
      * Verifica se a posição alvo calculada está fora dos limites antes da normalização.
      */
     @Test
-    void failureNormalizedTarget() {
+    void failureNormalizedTarget1() {
         assertTrue(target > panel.getWidth() || target < 0,
                 "A posição alvo ainda não foi normalizada e está fora dos limites");
     }
@@ -164,8 +170,8 @@ public class BallPanelTest {
      */
     @Test
     void succededNormalizedTarget() {
-        System.out.println(panel._getWidth());
-        assertTrue((panel.normalizedTarget(target) <= panel._getWidth()) &&
+        System.out.println(panel.getWidth());
+        assertTrue((panel.normalizedTarget(target) <= panel.getWidth()) &&
                         (panel.normalizedTarget(target) >= 0),
                 "Posição alvo está normalizada, então não saiu do limite da tela");
     }

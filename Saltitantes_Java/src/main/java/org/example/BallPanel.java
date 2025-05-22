@@ -220,7 +220,7 @@ public class BallPanel extends JPanel {
         if (balls.isEmpty()) {
             return false;
         }
-
+        System.out.println(getWidth());
         if (canUpdate) {
             for (Ball ball : balls) {
                 // Atualização vertical
@@ -275,15 +275,6 @@ public class BallPanel extends JPanel {
         for (Ball ball : balls) {
             g.fillOval(ball.x, ball.y, BALL_SIZE, BALL_SIZE);
         }
-    }
-
-    /**
-     * Retorna a largura atual do painel.
-     *
-     * @return Largura em pixels.
-     */
-    public int _getWidth() {
-        return getWidth();
     }
 
     /**
