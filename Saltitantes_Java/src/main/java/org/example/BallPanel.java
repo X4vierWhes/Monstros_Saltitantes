@@ -1,3 +1,5 @@
+package main.java.org.example;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -36,6 +38,7 @@ public class BallPanel extends JPanel {
         balls.add(new Ball(posX, groundY, spdX, spdY, label));
         label.setText("R$ " + (balls.getLast().money / 100.0));
         balls.getLast().x = calcNextPosition(balls.getLast());
+        balls.getLast().target = balls.getLast().x;
         this.add(label);
         this.setComponentZOrder(label, 0);
     }
@@ -118,9 +121,9 @@ public class BallPanel extends JPanel {
         double rawTarget = calcTarget(ball);
         double normalized = (rawTarget - minX) / range;
 
-        int screenTarget = (int)(normalized * (getWidth() - BallPanel.BALL_SIZE));
+        int screenTarget = (int)(normalized * (getWidth() - BALL_SIZE));
 
-        screenTarget = Math.max(0, Math.min(screenTarget, getWidth() - BallPanel.BALL_SIZE));
+        screenTarget = Math.max(0, Math.min(screenTarget, getWidth() - BALL_SIZE));
 
         //System.out.println("Target: " + screenTarget);
         return screenTarget;
@@ -158,10 +161,10 @@ public class BallPanel extends JPanel {
                     }else if(balls.get(moveIndex).target < balls.get(moveIndex).x) {
                         balls.get(moveIndex).x -= balls.get(moveIndex).spdX;
                     }
-                    //System.out.println( balls.get(moveIndex).target + " / " + balls.get(moveIndex).x);
+                    System.out.println( balls.get(moveIndex).target + " / " + balls.get(moveIndex).x);
                 }else{
                     moveIndex = (moveIndex + 1) % balls.size();
-                    System.out.println("Index move: " + moveIndex);
+                    //System.out.println("Index move: " + moveIndex);
                 }
                 ball.label.setText("R$ " + (ball.money / 100.0));
                 ball.label.setBounds(ball.x, ball.y - 20, BALL_SIZE, 20);
@@ -179,4 +182,3 @@ public class BallPanel extends JPanel {
         }
     }
 }
-

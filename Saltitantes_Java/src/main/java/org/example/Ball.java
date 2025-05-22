@@ -1,3 +1,5 @@
+package main.java.org.example;
+
 import javax.swing.*;
 
 public class Ball {
@@ -37,4 +39,3 @@ public class Ball {
         }
     }
 }
-
