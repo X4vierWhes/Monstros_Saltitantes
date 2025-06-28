@@ -142,6 +142,8 @@ public class CreaturesPanel extends JPanel {
 
                 // Adiciona o novo cluster
                 Creatures.add(cluster);
+                cluster.target = calcNextPosition(cluster);
+                cluster.canMove = true;
                 System.err.println("Criou novo cluster");
                 Creatures.add(guardian);
 
@@ -257,7 +259,7 @@ public class CreaturesPanel extends JPanel {
      * @return true se a atualização foi bem-sucedida, false se não há bolas left.
      */
     public boolean update() {
-        if(Creatures.size() == 2 && startSimulation){
+        if(Creatures.size() <= 2 && startSimulation){
             stopSimulation();
         }
         synchronized (Creatures) {
@@ -380,6 +382,7 @@ public class CreaturesPanel extends JPanel {
 
                     System.err.println("Guardião 'matou' cluster");
                     guardian.target = calcNextPosition(guardian);
+                    guardian.canMove = true;
                 }
             }else{
                 System.err.println("Não possui guardião");
