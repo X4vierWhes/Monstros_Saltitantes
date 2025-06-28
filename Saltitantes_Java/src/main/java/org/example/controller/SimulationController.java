@@ -19,13 +19,10 @@ import java.util.Random;
 public class SimulationController {
 
     /** Largura da janela. */
-    private static int WIDTH = 720;
+    private static final int WIDTH = 720;
 
     /** Altura da janela. */
-    private static int HEIGHT = 480;
-
-    /** Janela principal do aplicativo. */
-    private JFrame frame;
+    private static final int HEIGHT = 480;
 
     /** Painel que gerencia as bolas. */
     private CreaturesPanel CreaturesPanel;
@@ -40,7 +37,8 @@ public class SimulationController {
      */
     public boolean initScreen() {
         try {
-            frame = new JFrame("Saltitantes");
+            /** Janela principal do aplicativo. */
+            JFrame frame = new JFrame("Saltitantes");
             frame.setSize(WIDTH, HEIGHT);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

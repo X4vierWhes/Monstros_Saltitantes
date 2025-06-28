@@ -35,16 +35,13 @@ public class Creature {
     boolean canTheft = true;
 
     /** Indica se é um cluster */
-    boolean isCluster = true;
+    boolean isCluster = false;
 
     /** Índice do alvo atual da bola (possivelmente outra bola ou jogador). */
     int target = 0;
 
     /** Rótulo visual associado à bola (usado para exibição gráfica). */
     JLabel label;
-
-    /** Timer responsável por controlar o tempo de recarga após um roubo. */
-    Timer cooldown;
 
     /**
      * Construtor da classe Creature.
@@ -61,28 +58,5 @@ public class Creature {
         this.spdX = spdX;
         this.spdY = spdY;
         this.label = label;
-        cooldown = new Timer(3000, e -> cooldownTimer());
-    }
-
-    /**
-     * Inicia o temporizador de recarga de roubo se ainda não estiver ativo.
-     * Após 3 segundos, o roubo será permitido novamente.
-     */
-    public void startTimer() {
-        if (!cooldown.isRunning()) {
-            canTheft = false;
-            cooldown.setRepeats(false);
-            cooldown.start();
-        }
-    }
-
-    /**
-     * Habilita o roubo novamente e interrompe o temporizador se estiver em execução.
-     */
-    public void cooldownTimer() {
-        canTheft = true;
-        if (cooldown.isRunning()) {
-            cooldown.stop();
-        }
     }
 }

@@ -4,9 +4,10 @@ import org.example.model.Creature;
 import org.w3c.dom.css.RGBColor;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
+import java.util.List;
 
 /**
  * Painel gráfico responsável por gerenciar e exibir múltiplas bolas em movimento.
@@ -27,7 +28,7 @@ public class CreaturesPanel extends JPanel {
     private final int groundY;
 
     /** Lista de todas as bolas presentes no painel. */
-    private final ArrayList<Creature> Creatures = new ArrayList<>();
+    private List<Creature> Creatures = new ArrayList<>();
 
     /** Timer que controla a física das bolas (gravidade, movimento). */
     private Timer phisycsTimer;
@@ -49,6 +50,8 @@ public class CreaturesPanel extends JPanel {
 
     /** Flag que alterna o momento de atualizar ou não. */
     private boolean canUpdate = true;
+
+    private boolean check = false;
 
     /** Índice atual da bola que está se movendo. */
     private static int moveIndex = 0;
@@ -87,6 +90,39 @@ public class CreaturesPanel extends JPanel {
         this.setComponentZOrder(label, 0);
     }
 
+    private void createCluster(ArrayList<Creature> creaturesColliding){
+        if(creaturesColliding.size() > 1){
+            JLabel label = new JLabel();
+            label.setForeground(Color.WHITE);
+            label.setBounds(creaturesColliding.get(0).x, groundY - 20, CREATURE_SIZE, 20);
+            label.setHorizontalAlignment(SwingConstants.CENTER);
+
+            Creature cluster = new Creature(creaturesColliding.get(0).x, 0, 1, 0, label);
+            cluster.isCluster = true;
+
+            for(Creature aux: creaturesColliding){ //Somar ouro das criaturas que irão formar um cluster
+                cluster.money += aux.money;
+            }
+
+            Iterator<Creature> it = Creatures.iterator();
+
+            while(it.hasNext()){
+                for(Creature aux: creaturesColliding){
+                    if(aux == it.next()){
+                        this.remove(it.next().label);
+                        it.remove();
+                    }
+                }
+            }
+
+            Creatures.add(cluster);
+
+            label.setText("R$ " + (cluster.money / 100.0));
+            this.add(label);
+            this.setComponentZOrder(label, 0);
+        }
+    }
+
     /**
      * Inicia o timer de atualização lógica (roubos e movimentação).
      */
@@ -114,32 +150,6 @@ public class CreaturesPanel extends JPanel {
                 return false;
             }
         }
-        return true;
-    }
-
-    /**
-     * Atualiza o estado lógico do jogo, removendo bolas sem dinheiro e ativando roubos.
-     *
-     * @return true se a atualização foi bem-sucedida, false se não há bolas restantes.
-     */
-    public boolean update() {
-        interacao++;
-        canUpdate = !canUpdate;
-
-        Creatures.removeIf(Creature -> Creature.money <= 0.0);
-
-        if (Creatures.isEmpty()) {
-            return false;
-        }
-
-        for (Creature Creature : Creatures) {
-            if (Creature.canTheft) {
-                thiefNeighbor(Creature);
-                Creature.canMove = true;
-            }
-        }
-
-        canUpdate = !canUpdate;
         return true;
     }
 
@@ -215,6 +225,37 @@ public class CreaturesPanel extends JPanel {
     }
 
     /**
+     * Atualiza o estado lógico do jogo, removendo bolas sem dinheiro e ativando roubos.
+     *
+     * @return true se a atualização foi bem-sucedida, false se não há bolas restantes.
+     */
+    public boolean update() {
+
+        if(check){
+           return false;
+        }
+
+        interacao++;
+        canUpdate = !canUpdate;
+
+        Creatures.removeIf(Creature -> Creature.money <= 0.0);
+
+        if (Creatures.isEmpty()) {
+            return false;
+        }
+
+        for (Creature Creature : Creatures) {
+            if (Creature.canTheft) {
+                thiefNeighbor(Creature);
+                Creature.canMove = true;
+            }
+        }
+
+        canUpdate = !canUpdate;
+        return true;
+    }
+
+    /**
      * Atualiza a física das bolas (gravidade, pulo e movimentação horizontal).
      *
      * @return true se a atualização ocorreu normalmente, false se não há bolas.
@@ -224,24 +265,34 @@ public class CreaturesPanel extends JPanel {
             return false;
         }
         //System.out.println(getWidth());
-        if (canUpdate) {
-            for (Creature Creature : Creatures) {
-                // Atualização vertical
-                Creature.spdY += grav;
-                Creature.y += Creature.spdY;
 
-                if (Creature.y >= groundY) {
-                    Creature.y = groundY;
-                    Creature.spdY = jumpForce;
+        if (canUpdate) {
+            for (Creature creature : Creatures) {
+                // Atualização vertical (PULO) se nao for cluster
+                if (!creature.isCluster) {
+                    creature.spdY += grav;
+                    creature.y += creature.spdY;
+
+                    if (creature.y >= groundY) {
+                        creature.y = groundY;
+                        creature.spdY = jumpForce;
+                    }
                 }
 
                 // Atualização horizontal (movimento em direção ao alvo)
-                Creature moving = Creatures.get(moveIndex);
+                Creature moving = Creatures.get(moveIndex); //Criatura que vai se mover
                 if (moving.canMove) {
-
+                    moving.label.setForeground(new Color(255, 0, 0));
                     if (moving.x == moving.target) {
                         moving.canMove = false;
-                        moving.startTimer();
+
+                        if (moveIndex == Creatures.size() - 1) {
+                            checkCluster(); //Checa se precisa criar clusters
+
+                            for (Creature aux : Creatures) {
+                                aux.canTheft = true; //Autoriza criaturas a roubar novamente
+                            }
+                        }
                     }
 
                     if (moving.x != moving.target) {
@@ -254,17 +305,60 @@ public class CreaturesPanel extends JPanel {
                         moving.x -= moving.spdX;
                     }
                 } else {
+                    moving.label.setForeground(new Color(255, 255, 255));
                     moveIndex = (moveIndex + 1) % Creatures.size();
                 }
 
-                Creature.label.setText("R$ " + (Creature.money / 100.0));
-                Creature.label.setBounds(Creature.x, Creature.y - 20, CREATURE_SIZE, 20);
+                creature.label.setText("R$ " + (creature.money / 100.0));
+                creature.label.setBounds(creature.x, creature.y - 20, CREATURE_SIZE, 20);
             }
         }
 
         repaint();
         return true;
     }
+
+    /**
+     * Checa se precisa criar novos clusters (duas ou mais criaturas na mesma posição
+     */
+    private void checkCluster() {
+        check = true;
+        System.out.println(check);
+        Map<Integer, List<Creature>> positionMap = new HashMap<>();
+
+        for (Creature c : Creatures) {
+            positionMap.computeIfAbsent(c.x, k -> new ArrayList<>()).add(c);
+        }
+
+        Set<Creature> toRemove = new HashSet<>();
+
+        for (Map.Entry<Integer, List<Creature>> entry : positionMap.entrySet()) {
+            List<Creature> grupo = entry.getValue();
+
+            if (grupo.size() > 1) {
+                System.out.println(Creatures.size());
+                createCluster(new ArrayList<>(grupo));
+                toRemove.addAll(grupo); // Marca para remoção após
+                System.out.println("Criei cluster");
+            }
+        }
+
+        // Remove criaturas que formaram cluster de forma segura
+        Iterator<Creature> it = Creatures.iterator();
+        while (it.hasNext()) {
+            if (toRemove.contains(it.next())) {
+                it.remove();
+                moveIndex--;
+            }
+        }
+
+        System.out.println(Creatures.size());
+
+        check = false;
+        System.out.println(check);
+    }
+
+
 
     /**
      * Renderiza as bolas no painel.
