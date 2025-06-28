@@ -1,4 +1,6 @@
-package org.example;
+package org.example.controller;
+
+import org.example.model.CreaturesPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -7,26 +9,26 @@ import java.util.Random;
 /**
  * Classe responsável por inicializar a interface gráfica do jogo "Saltitantes".
  *
- * <p>Ela cria a janela principal com um painel de bolas {@link BallPanel},
+ * <p>Ela cria a janela principal com um painel de bolas {@link org.example.model.CreaturesPanel},
  * adiciona botões de interação e gerencia a inserção de bolas em posições aleatórias.</p>
  *
  * @author ValentinaClash
  * @version 1.0
- * @see BallPanel
+ * @see CreaturesPanel
  */
-public class Screen {
+public class SimulationController {
 
     /** Largura da janela. */
-    private static int width = 720;
+    private static int WIDTH = 720;
 
     /** Altura da janela. */
-    private static int height = 480;
+    private static int HEIGHT = 480;
 
     /** Janela principal do aplicativo. */
     private JFrame frame;
 
     /** Painel que gerencia as bolas. */
-    private BallPanel ballPanel;
+    private CreaturesPanel CreaturesPanel;
 
     /** Gerador de números aleatórios para posições. */
     private Random rand = new Random();
@@ -39,19 +41,19 @@ public class Screen {
     public boolean initScreen() {
         try {
             frame = new JFrame("Saltitantes");
-            frame.setSize(width, height);
+            frame.setSize(WIDTH, HEIGHT);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            ballPanel = new BallPanel(width, height);
-            ballPanel.setLayout(null);
-            frame.add(ballPanel);
+            CreaturesPanel = new CreaturesPanel(WIDTH, HEIGHT);
+            CreaturesPanel.setLayout(null);
+            frame.add(CreaturesPanel);
 
             addButton();
             addBallInRandomPos();
 
             frame.setVisible(true);
-            ballPanel.startPhisycsTimer();
-            ballPanel.startUpdateTimer();
+            CreaturesPanel.startPhisycsTimer();
+            CreaturesPanel.startUpdateTimer();
             return true;
         } catch (Exception e) {
             return false;
@@ -66,15 +68,16 @@ public class Screen {
     private boolean addButton() {
         try {
             JButton button = new JButton("ADD BALL");
-            int buttonWidth = 100;
-            int buttonHeight = 25;
-            button.setBounds(width - buttonWidth - 20, 10, buttonWidth, buttonHeight);
+            int buttonWIDTH = 100;
+            int buttonHEIGHT = 25;
+            button.setBounds(WIDTH - buttonWIDTH - 20, 10, buttonWIDTH, buttonHEIGHT);
             button.setBackground(Color.BLUE);
             button.setForeground(Color.WHITE);
-            ballPanel.add(button);
-            ballPanel.setComponentZOrder(button, 0);
+            CreaturesPanel.add(button);
+            CreaturesPanel.setComponentZOrder(button, 0);
             button.addActionListener(e -> addBallInRandomPos());
         } catch (Exception e) {
+            System.err.println("Não foi possivel adicionar o botão");
             return false;
         }
         return true;
@@ -87,8 +90,8 @@ public class Screen {
      */
     public boolean addBallInRandomPos() {
         try {
-            int randomX = rand.nextInt(width - BallPanel.BALL_SIZE);
-            ballPanel.addBall(randomX);
+            int randomX = rand.nextInt(WIDTH - org.example.model.CreaturesPanel.CREATURE_SIZE);
+            CreaturesPanel.addCreature(randomX);
         } catch (Exception e) {
             return false;
         }

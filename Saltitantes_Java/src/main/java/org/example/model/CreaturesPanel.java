@@ -1,4 +1,7 @@
-package org.example;
+package org.example.model;
+
+import org.example.model.Creature;
+import org.w3c.dom.css.RGBColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,18 +16,18 @@ import java.util.Random;
  *
  * @author ValentinaClash
  * @version 1.0
- * @see Ball
+ * @see Creature
  */
-public class BallPanel extends JPanel {
+public class CreaturesPanel extends JPanel {
 
     /** Tamanho padrão da bola em pixels. */
-    public static final int BALL_SIZE = 50;
+    public static final int CREATURE_SIZE = 50;
 
     /** Posição Y que representa o chão. */
     private final int groundY;
 
     /** Lista de todas as bolas presentes no painel. */
-    private final ArrayList<Ball> balls = new ArrayList<>();
+    private final ArrayList<Creature> Creatures = new ArrayList<>();
 
     /** Timer que controla a física das bolas (gravidade, movimento). */
     private Timer phisycsTimer;
@@ -56,10 +59,10 @@ public class BallPanel extends JPanel {
      * @param width  Largura do painel.
      * @param height Altura do painel.
      */
-    public BallPanel(int width, int height) {
+    public CreaturesPanel(int width, int height) {
         setBackground(Color.BLACK);
         setPreferredSize(new Dimension(width, height));
-        groundY = height - BALL_SIZE - 40;
+        groundY = height - CREATURE_SIZE - 40;
     }
 
     /**
@@ -67,19 +70,19 @@ public class BallPanel extends JPanel {
      *
      * @param posX Posição X inicial da bola.
      */
-    public void addBall(int posX) {
+    public void addCreature(int posX) {
         int spdX = 1;
         int spdY = rand.nextInt(6) - 3;
 
         JLabel label = new JLabel();
         label.setForeground(Color.WHITE);
-        label.setBounds(posX, groundY - 20, BALL_SIZE, 20);
+        label.setBounds(posX, groundY - 20, CREATURE_SIZE, 20);
         label.setHorizontalAlignment(SwingConstants.CENTER);
 
-        balls.add(new Ball(posX, groundY, spdX, spdY, label));
-        label.setText("R$ " + (balls.getLast().money / 100.0));
-        balls.getLast().x = calcNextPosition(balls.getLast());
-        balls.getLast().target = balls.getLast().x;
+        Creatures.add(new Creature(posX, groundY, spdX, spdY, label));
+        label.setText("R$ " + (Creatures.getLast().money / 100.0));
+        Creatures.getLast().x = calcNextPosition(Creatures.getLast());
+        Creatures.getLast().target = Creatures.getLast().x;
         this.add(label);
         this.setComponentZOrder(label, 0);
     }
@@ -106,8 +109,8 @@ public class BallPanel extends JPanel {
      * @return true se todas as bolas estão paradas, senão false.
      */
     public boolean isCanUpdate() {
-        for (Ball ball : balls) {
-            if (ball.canMove) {
+        for (Creature Creature : Creatures) {
+            if (Creature.canMove) {
                 return false;
             }
         }
@@ -123,16 +126,16 @@ public class BallPanel extends JPanel {
         interacao++;
         canUpdate = !canUpdate;
 
-        balls.removeIf(ball -> ball.money <= 0.0);
+        Creatures.removeIf(Creature -> Creature.money <= 0.0);
 
-        if (balls.isEmpty()) {
+        if (Creatures.isEmpty()) {
             return false;
         }
 
-        for (Ball ball : balls) {
-            if (ball.canTheft) {
-                thiefNeighbor(ball);
-                ball.canMove = true;
+        for (Creature Creature : Creatures) {
+            if (Creature.canTheft) {
+                thiefNeighbor(Creature);
+                Creature.canMove = true;
             }
         }
 
@@ -146,16 +149,16 @@ public class BallPanel extends JPanel {
      * @param thief A bola que irá roubar.
      * @return true se o roubo foi realizado com sucesso.
      */
-    public boolean thiefNeighbor(Ball thief) {
-        if (balls.size() <= 1) return false;
+    public boolean thiefNeighbor(Creature thief) {
+        if (Creatures.size() <= 1) return false;
 
         if (isCanUpdate()) {
             int closerIndex = 0;
             int index = 0;
-            int closest_distance = getWidth() - BALL_SIZE;
+            int closest_distance = getWidth() - CREATURE_SIZE;
             int aux_distance;
 
-            for (Ball neighbor : balls) {
+            for (Creature neighbor : Creatures) {
                 if (thief != neighbor) {
                     aux_distance = Math.abs(thief.x - neighbor.x);
                     if (aux_distance <= closest_distance) {
@@ -166,11 +169,11 @@ public class BallPanel extends JPanel {
                 index++;
             }
 
-            thief.money += balls.get(closerIndex).money / 2;
-            balls.get(closerIndex).money /= 2;
+            thief.money += Creatures.get(closerIndex).money / 2;
+            Creatures.get(closerIndex).money /= 2;
 
             thief.target = calcNextPosition(thief);
-            balls.get(closerIndex).target = calcNextPosition(balls.get(closerIndex));
+            Creatures.get(closerIndex).target = calcNextPosition(Creatures.get(closerIndex));
         }
         return true;
     }
@@ -178,14 +181,14 @@ public class BallPanel extends JPanel {
     /**
      * Calcula a próxima posição horizontal da bola na tela com base em seu alvo.
      *
-     * @param ball Bola cuja posição será calculada.
+     * @param Creature Bola cuja posição será calculada.
      * @return Posição X em pixels na tela.
      */
-    public int calcNextPosition(Ball ball) {
-        double rawTarget = calcTarget(ball);
+    public int calcNextPosition(Creature Creature) {
+        double rawTarget = calcTarget(Creature);
         double normalized = normalizedTarget(rawTarget);
-        int screenTarget = (int) (normalized * (getWidth() - BALL_SIZE));
-        return Math.max(0, Math.min(screenTarget, getWidth() - BALL_SIZE));
+        int screenTarget = (int) (normalized * (getWidth() - CREATURE_SIZE));
+        return Math.max(0, Math.min(screenTarget, getWidth() - CREATURE_SIZE));
     }
 
     /**
@@ -204,11 +207,11 @@ public class BallPanel extends JPanel {
     /**
      * Calcula o valor bruto de destino horizontal da bola com base na sua posição e dinheiro.
      *
-     * @param ball Bola cujo destino será calculado.
+     * @param Creature Bola cujo destino será calculado.
      * @return Valor alvo em coordenadas lógicas.
      */
-    public double calcTarget(Ball ball) {
-        return ball.x + (rand.nextDouble(2) - 1) * ball.money;
+    public double calcTarget(Creature Creature) {
+        return Creature.x + (rand.nextDouble(2) - 1) * Creature.money;
     }
 
     /**
@@ -217,24 +220,24 @@ public class BallPanel extends JPanel {
      * @return true se a atualização ocorreu normalmente, false se não há bolas.
      */
     public boolean phisycsUpdate() {
-        if (balls.isEmpty()) {
+        if (Creatures.isEmpty()) {
             return false;
         }
-        System.out.println(getWidth());
+        //System.out.println(getWidth());
         if (canUpdate) {
-            for (Ball ball : balls) {
+            for (Creature Creature : Creatures) {
                 // Atualização vertical
-                ball.spdY += grav;
-                ball.y += ball.spdY;
+                Creature.spdY += grav;
+                Creature.y += Creature.spdY;
 
-                if (ball.y >= groundY) {
-                    ball.y = groundY;
-                    ball.spdY = jumpForce;
+                if (Creature.y >= groundY) {
+                    Creature.y = groundY;
+                    Creature.spdY = jumpForce;
                 }
 
                 // Atualização horizontal (movimento em direção ao alvo)
-                if (balls.get(moveIndex).canMove) {
-                    Ball moving = balls.get(moveIndex);
+                Creature moving = Creatures.get(moveIndex);
+                if (moving.canMove) {
 
                     if (moving.x == moving.target) {
                         moving.canMove = false;
@@ -251,11 +254,11 @@ public class BallPanel extends JPanel {
                         moving.x -= moving.spdX;
                     }
                 } else {
-                    moveIndex = (moveIndex + 1) % balls.size();
+                    moveIndex = (moveIndex + 1) % Creatures.size();
                 }
 
-                ball.label.setText("R$ " + (ball.money / 100.0));
-                ball.label.setBounds(ball.x, ball.y - 20, BALL_SIZE, 20);
+                Creature.label.setText("R$ " + (Creature.money / 100.0));
+                Creature.label.setBounds(Creature.x, Creature.y - 20, CREATURE_SIZE, 20);
             }
         }
 
@@ -271,9 +274,15 @@ public class BallPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(Color.BLUE);
-        for (Ball ball : balls) {
-            g.fillOval(ball.x, ball.y, BALL_SIZE, BALL_SIZE);
+
+        for (Creature creature : Creatures) {
+            if(!creature.isCluster) {
+                g.setColor(new Color(0,0,255));
+                g.fillOval(creature.x, creature.y, CREATURE_SIZE, CREATURE_SIZE);
+            }else{
+                g.setColor(new Color(157,0,255));
+                g.fillRect(creature.x, creature.y, CREATURE_SIZE, CREATURE_SIZE);
+            }
         }
     }
 
@@ -282,11 +291,11 @@ public class BallPanel extends JPanel {
      *
      * @param remove Bola a ser removida.
      */
-    public boolean removeBall(Ball remove) {
-        if (balls.size() <= 1){
+    public boolean removeCreature(Creature remove) {
+        if (Creatures.size() <= 1){
             return false;
         }
-        balls.remove(remove);
+        Creatures.remove(remove);
         return true;
     }
 
@@ -295,10 +304,10 @@ public class BallPanel extends JPanel {
      *
      * @return Última bola da lista.
      */
-    public Ball getLast() {
-        if(balls.isEmpty()){
+    public Creature getLast() {
+        if(Creatures.isEmpty()){
             return null;
         }
-        return balls.getLast();
+        return Creatures.getLast();
     }
 }

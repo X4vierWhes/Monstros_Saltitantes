@@ -1,4 +1,4 @@
-package org.example;
+package org.example.model;
 
 import javax.swing.*;
 
@@ -11,7 +11,7 @@ import javax.swing.*;
  * @author ValentinaClash
  * @version 1.0
  */
-public class Ball {
+public class Creature {
 
     /** Coordenada X da bola. */
     public int x;
@@ -34,6 +34,9 @@ public class Ball {
     /** Indica se a bola pode realizar roubo. */
     boolean canTheft = true;
 
+    /** Indica se é um cluster */
+    boolean isCluster = true;
+
     /** Índice do alvo atual da bola (possivelmente outra bola ou jogador). */
     int target = 0;
 
@@ -44,7 +47,7 @@ public class Ball {
     Timer cooldown;
 
     /**
-     * Construtor da classe Ball.
+     * Construtor da classe Creature.
      *
      * @param x     Posição inicial no eixo X.
      * @param y     Posição inicial no eixo Y.
@@ -52,13 +55,13 @@ public class Ball {
      * @param spdY  Velocidade vertical inicial.
      * @param label JLabel associado à representação visual da bola.
      */
-    public Ball(int x, int y, int spdX, int spdY, JLabel label) {
+    public Creature(int x, int y, int spdX, int spdY, JLabel label) {
         this.x = x;
         this.y = y;
         this.spdX = spdX;
         this.spdY = spdY;
         this.label = label;
-        cooldown = new Timer(3000, e -> thiefTimer());
+        cooldown = new Timer(3000, e -> cooldownTimer());
     }
 
     /**
@@ -76,7 +79,7 @@ public class Ball {
     /**
      * Habilita o roubo novamente e interrompe o temporizador se estiver em execução.
      */
-    public void thiefTimer() {
+    public void cooldownTimer() {
         canTheft = true;
         if (cooldown.isRunning()) {
             cooldown.stop();

@@ -1,7 +1,7 @@
 package org.tests;
 
-import org.example.Ball;
-import org.example.BallPanel;
+import org.example.model.Creature;
+import org.example.model.CreaturesPanel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Classe de testes unitários para a classe {@link BallPanel}.
+ * Classe de testes unitários para a classe {@link CreaturesPanel}.
  * <p>
  * Verifica o comportamento dos métodos relacionados ao movimento,
  * roubo, adição, remoção, normalização e atualização de bolas.
@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author SeuNome
  * @version 1.0
  */
-public class BallPanelTest {
+public class CreaturesPanelTest {
 
     /** Painel a ser testado. */
-    private BallPanel panel;
+    private CreaturesPanel panel;
 
     /** Largura padrão do painel. */
     private final int width = 720;
@@ -47,12 +47,12 @@ public class BallPanelTest {
         JFrame frame = new JFrame();
 
         randi = new Random();
-        panel = new BallPanel(width, height);
+        panel = new CreaturesPanel(width, height);
         frame.add(panel);
         frame.pack();
         System.out.println(panel.getWidth());
-        int posX = randi.nextInt(width - BallPanel.BALL_SIZE);
-        panel.addBall(posX);
+        int posX = randi.nextInt(width - CreaturesPanel.CREATURE_SIZE);
+        panel.addCreature(posX);
         target = panel.calcTarget(panel.getLast());
     }
 
@@ -87,9 +87,9 @@ public class BallPanelTest {
      * Verifica se uma nova bola é adicionada corretamente ao painel.
      */
     @Test
-    void testAddBall() {
-        int posX = randi.nextInt(width - BallPanel.BALL_SIZE);
-        panel.addBall(posX);
+    void testAddCreature() {
+        int posX = randi.nextInt(width - CreaturesPanel.CREATURE_SIZE);
+        panel.addCreature(posX);
         assertNotNull(panel.getLast(), "A bola não foi adicionada corretamente");
         assertNotEquals(posX, panel.getLast().x, "A posição X da bola deveria ter sido normalizada");
     }
@@ -98,8 +98,8 @@ public class BallPanelTest {
      * Verifica que a bola não pode ser removida se houver apenas uma no painel.
      */
     @Test
-    void testRemoveBall() {
-        assertFalse(panel.removeBall(panel.getLast()),
+    void testRemoveCreature() {
+        assertFalse(panel.removeCreature(panel.getLast()),
                 "A bola não pode ser removida se for a única no painel");
     }
 
@@ -107,12 +107,12 @@ public class BallPanelTest {
      * Verifica se uma bola pode ser removida corretamente quando há mais de uma.
      */
     @Test
-    void testRemoveBallMoreOneBall() {
-        Ball lastBall = panel.getLast();
-        int posX = randi.nextInt(width - BallPanel.BALL_SIZE);
-        panel.addBall(posX);
-        panel.removeBall(lastBall);
-        assertNotSame(lastBall, panel.getLast(),
+    void testRemoveCreatureMoreOneCreature() {
+        Creature lastCreature = panel.getLast();
+        int posX = randi.nextInt(width - CreaturesPanel.CREATURE_SIZE);
+        panel.addCreature(posX);
+        panel.removeCreature(lastCreature);
+        assertNotSame(lastCreature, panel.getLast(),
                 "A bola antiga ainda é a última após a tentativa de remoção");
     }
 
@@ -121,9 +121,9 @@ public class BallPanelTest {
      */
     @Test
     void testGetLastWithEmptyList() {
-        panel.removeBall(panel.getLast());
+        panel.removeCreature(panel.getLast());
         assertNotNull(panel.getLast(),
-                "getLast() não deve retornar null pois removeBall não remove a última bola");
+                "getLast() não deve retornar null pois removeCreature não remove a última bola");
     }
 
     /**
@@ -141,8 +141,8 @@ public class BallPanelTest {
      */
     @Test
     void succededThiefTest() {
-        int posX = randi.nextInt(width - BallPanel.BALL_SIZE);
-        panel.addBall(posX);
+        int posX = randi.nextInt(width - CreaturesPanel.CREATURE_SIZE);
+        panel.addCreature(posX);
         assertTrue(panel.thiefNeighbor(panel.getLast()),
                 "O roubo deveria ser possível com múltiplas bolas");
     }
@@ -200,7 +200,7 @@ public class BallPanelTest {
      */
     @Test
     void failurePhisycsUpdate() {
-        panel.removeBall(panel.getLast());
+        panel.removeCreature(panel.getLast());
         assertTrue(panel.phisycsUpdate(),
                 "A atualização física deveria continuar com uma bola restante");
     }
