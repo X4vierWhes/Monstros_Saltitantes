@@ -37,6 +37,9 @@ public class Creature {
     /** Indica se é um cluster */
     boolean isCluster = false;
 
+    /** Indica se é um guardião */
+    boolean isGuardian = false;
+
     /** Índice do alvo atual da bola (possivelmente outra bola ou jogador). */
     int target = 0;
 

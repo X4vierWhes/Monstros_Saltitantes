@@ -15,5 +15,6 @@ public class Guardian extends Creature{
     public Guardian(int x, int y, int spdX, int spdY, JLabel label) {
         super(x, y, spdX, spdY, label);
         this.money = 0.0;
+        this.isGuardian = true;
     }
 }

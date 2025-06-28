@@ -24,18 +24,21 @@ public class SimulationController {
     /** Altura da janela. */
     private static final int HEIGHT = 480;
 
+    private static final int buttonWIDTH = 100;
+    private static final int buttonHEIGHT = 25;
+
     /** Painel que gerencia as bolas. */
     private CreaturesPanel CreaturesPanel;
+
+    private static boolean simulation = false;
 
     /** Gerador de números aleatórios para posições. */
     private Random rand = new Random();
 
     /**
      * Inicializa a tela principal, cria o painel de bolas, adiciona botões e inicia os timers.
-     *
-     * @return {@code true} se a tela foi inicializada com sucesso, senão {@code false}.
      */
-    public boolean initScreen() {
+    public void initScreen() {
         try {
             /** Janela principal do aplicativo. */
             JFrame frame = new JFrame("Saltitantes");
@@ -46,29 +49,38 @@ public class SimulationController {
             CreaturesPanel.setLayout(null);
             frame.add(CreaturesPanel);
 
-            addButton();
+            addBallButton();
+            addInitButton();
             addBallInRandomPos();
 
             frame.setVisible(true);
             CreaturesPanel.startPhisycsTimer();
             CreaturesPanel.startUpdateTimer();
-            return true;
         } catch (Exception e) {
-            return false;
+        }
+    }
+
+    private void addInitButton() {
+        try{
+            JButton button = new JButton("Init");
+            button.setBounds(WIDTH - buttonWIDTH - 20, 10, buttonWIDTH, buttonHEIGHT);
+            button.setBackground(Color.BLUE);
+            button.setForeground(Color.WHITE);
+            CreaturesPanel.add(button);
+            CreaturesPanel.setComponentZOrder(button, 0);
+            button.addActionListener(e -> initSimulation());
+        }catch (Exception e){
+            System.err.println("Não foi possivel adicionar botão de iniciar simulação");
         }
     }
 
     /**
      * Adiciona o botão "ADD BALL" à interface gráfica para permitir ao usuário adicionar novas bolas.
-     *
-     * @return {@code true} se o botão foi adicionado com sucesso, senão {@code false}.
      */
-    private boolean addButton() {
+    private void addBallButton() {
         try {
             JButton button = new JButton("ADD BALL");
-            int buttonWIDTH = 100;
-            int buttonHEIGHT = 25;
-            button.setBounds(WIDTH - buttonWIDTH - 20, 10, buttonWIDTH, buttonHEIGHT);
+            button.setBounds(WIDTH - 2 * buttonWIDTH - 40, 10, buttonWIDTH, buttonHEIGHT);
             button.setBackground(Color.BLUE);
             button.setForeground(Color.WHITE);
             CreaturesPanel.add(button);
@@ -76,23 +88,24 @@ public class SimulationController {
             button.addActionListener(e -> addBallInRandomPos());
         } catch (Exception e) {
             System.err.println("Não foi possivel adicionar o botão");
-            return false;
         }
-        return true;
     }
 
     /**
      * Adiciona uma nova bola em uma posição horizontal aleatória dentro do painel.
-     *
-     * @return {@code true} se a bola foi adicionada com sucesso, senão {@code false}.
      */
-    public boolean addBallInRandomPos() {
+    public void addBallInRandomPos() {
         try {
             int randomX = rand.nextInt(WIDTH - org.example.model.CreaturesPanel.CREATURE_SIZE);
             CreaturesPanel.addCreature(randomX);
         } catch (Exception e) {
-            return false;
+            System.err.println("Não foi possivel adicionar bola");
         }
-        return true;
+    }
+
+    public  void initSimulation(){
+        System.out.println("Simulação iniciada");
+        int randomX = rand.nextInt(WIDTH - org.example.model.CreaturesPanel.CREATURE_SIZE);
+        CreaturesPanel.initSimulation(randomX);
     }
 }
