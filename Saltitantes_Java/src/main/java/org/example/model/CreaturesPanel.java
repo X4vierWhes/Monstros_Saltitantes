@@ -97,22 +97,11 @@ public class CreaturesPanel extends JPanel {
             label.setBounds(creaturesColliding.get(0).x, groundY - 20, CREATURE_SIZE, 20);
             label.setHorizontalAlignment(SwingConstants.CENTER);
 
-            Creature cluster = new Creature(creaturesColliding.get(0).x, 0, 1, 0, label);
+            Creature cluster = new Creature(creaturesColliding.getFirst().x, groundY - 20, 1, 0, label);
             cluster.isCluster = true;
 
             for(Creature aux: creaturesColliding){ //Somar ouro das criaturas que irão formar um cluster
                 cluster.money += aux.money;
-            }
-
-            Iterator<Creature> it = Creatures.iterator();
-
-            while(it.hasNext()){
-                for(Creature aux: creaturesColliding){
-                    if(aux == it.next()){
-                        this.remove(it.next().label);
-                        it.remove();
-                    }
-                }
             }
 
             Creatures.add(cluster);
@@ -120,6 +109,7 @@ public class CreaturesPanel extends JPanel {
             label.setText("R$ " + (cluster.money / 100.0));
             this.add(label);
             this.setComponentZOrder(label, 0);
+            repaint();
         }
     }
 
@@ -267,6 +257,7 @@ public class CreaturesPanel extends JPanel {
         //System.out.println(getWidth());
 
         if (canUpdate) {
+
             for (Creature creature : Creatures) {
                 // Atualização vertical (PULO) se nao for cluster
                 if (!creature.isCluster) {
@@ -330,25 +321,13 @@ public class CreaturesPanel extends JPanel {
             positionMap.computeIfAbsent(c.x, k -> new ArrayList<>()).add(c);
         }
 
-        Set<Creature> toRemove = new HashSet<>();
-
         for (Map.Entry<Integer, List<Creature>> entry : positionMap.entrySet()) {
             List<Creature> grupo = entry.getValue();
 
             if (grupo.size() > 1) {
                 System.out.println(Creatures.size());
                 createCluster(new ArrayList<>(grupo));
-                toRemove.addAll(grupo); // Marca para remoção após
                 System.out.println("Criei cluster");
-            }
-        }
-
-        // Remove criaturas que formaram cluster de forma segura
-        Iterator<Creature> it = Creatures.iterator();
-        while (it.hasNext()) {
-            if (toRemove.contains(it.next())) {
-                it.remove();
-                moveIndex--;
             }
         }
 
