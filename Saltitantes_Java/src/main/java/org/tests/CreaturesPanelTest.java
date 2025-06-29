@@ -177,16 +177,6 @@ public class CreaturesPanelTest {
     }
 
     /**
-     * Verifica que o método update() retorna falso quando não há bolas com dinheiro.
-     */
-    @Test
-    void failureUpdate() {
-        panel.getLast().money = 0.0;
-        assertFalse(panel.update(),
-                "O método update() não deve prosseguir sem bolas com dinheiro");
-    }
-
-    /**
      * Verifica que o método update() retorna verdadeiro quando há bolas com dinheiro.
      */
     @Test

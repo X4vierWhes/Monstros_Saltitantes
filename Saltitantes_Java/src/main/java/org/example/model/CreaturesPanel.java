@@ -291,6 +291,10 @@ public class CreaturesPanel extends JPanel {
                     creaturesMove = 0;
                     snapshot = new ArrayList<>(Creatures);
                     System.err.println(creaturesMove + " / " + snapshot.size() + " / " + moveIndex);
+
+                    for (Creature aux : snapshot) {
+                        aux.canTheft = true;
+                    }
                 }
 
                 for (Creature creature : snapshot) {
@@ -369,9 +373,9 @@ public class CreaturesPanel extends JPanel {
                         removeCreature(c);
                     }
                     this.remove(guardian.label);
-                   setLabelText(guardian);
-                   guardian.target = calcNextPosition(guardian);
-                   guardian.canMove = true;
+                    setLabelText(guardian);
+                    guardian.target = calcNextPosition(guardian);
+                    guardian.canMove = true;
                 }
             }
         }
