@@ -96,8 +96,10 @@ public class SimulationController {
      */
     public void addBallInRandomPos() {
         try {
-            int randomX = rand.nextInt(WIDTH - org.example.model.CreaturesPanel.CREATURE_SIZE);
-            CreaturesPanel.addCreature(randomX);
+            if(!simulation) {
+                int randomX = rand.nextInt(WIDTH - org.example.model.CreaturesPanel.CREATURE_SIZE);
+                CreaturesPanel.addCreature(randomX);
+            }
         } catch (Exception e) {
             System.err.println("Não foi possivel adicionar bola");
         }
@@ -105,6 +107,7 @@ public class SimulationController {
 
     public  void initSimulation(){
         System.out.println("Simulação iniciada");
+        simulation = true;
         int randomX = rand.nextInt(WIDTH - org.example.model.CreaturesPanel.CREATURE_SIZE);
         CreaturesPanel.initSimulation(randomX);
     }

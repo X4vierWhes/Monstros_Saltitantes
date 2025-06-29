@@ -55,6 +55,9 @@ public class CreaturesPanel extends JPanel {
     /** Índice atual da bola que está se movendo. */
     private static int moveIndex = 0;
 
+    private static int ticksCount = 0;
+
+    private static int ticksToCompleteCycle;
     /**
      * Construtor do painel de bolas.
      *
@@ -178,8 +181,8 @@ public class CreaturesPanel extends JPanel {
     /**
      * Inicia o timer de atualização lógica (roubos e movimentação).
      */
-    public void startUpdateTimer(int delay) {
-        updateTimer = new Timer(delay, e -> update());
+    public void startUpdateTimer() {
+        updateTimer = new Timer(5000, e -> update());
         updateTimer.start();
     }
 
@@ -504,7 +507,7 @@ public class CreaturesPanel extends JPanel {
                 startSimulation = true;
                 moveIndex = 0;
                 createGuardian(randomX);
-                startUpdateTimer((int)estimateWorstCaseCycleMillis(Creatures));
+                startUpdateTimer();
             }
         }
     }
