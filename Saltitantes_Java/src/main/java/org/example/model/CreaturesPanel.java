@@ -178,8 +178,8 @@ public class CreaturesPanel extends JPanel {
     /**
      * Inicia o timer de atualização lógica (roubos e movimentação).
      */
-    public void startUpdateTimer() {
-        updateTimer = new Timer(5000, e -> update());
+    public void startUpdateTimer(int delay) {
+        updateTimer = new Timer(delay, e -> update());
         updateTimer.start();
     }
 
@@ -261,9 +261,6 @@ public class CreaturesPanel extends JPanel {
      * @return true se a atualização foi bem-sucedida, false se não há bolas left.
      */
     public boolean update() {
-        if(Creatures.size() <= 2 && startSimulation){
-            stopSimulation();
-        }
         synchronized (Creatures) {
 
             interacao++;
@@ -296,6 +293,11 @@ public class CreaturesPanel extends JPanel {
             if (Creatures.isEmpty()) {
                 return false;
             }
+
+            if(Creatures.size() <= 2 && startSimulation){
+                stopSimulation();
+            }
+
             List<Creature> snapshot; //Copia da lista de criaturas para evitar erros
             snapshot = new ArrayList<>(Creatures);
 
@@ -346,7 +348,6 @@ public class CreaturesPanel extends JPanel {
                     creature.label.setText("R$ " + (creature.money / 100.0));
                     creature.label.setBounds(creature.x, creature.y - 20, CREATURE_SIZE, 20);
                 }
-
 
                 if (moveIndex == 0 && startSimulation) {
                     System.err.println("ENTREI");
@@ -498,12 +499,30 @@ public class CreaturesPanel extends JPanel {
     }
 
     public void initSimulation(int randomX) {
-        if(!startSimulation) {
-            startSimulation = true;
-            moveIndex = 0;
-            createGuardian(randomX);
+        synchronized (Creatures){
+            if(!startSimulation) {
+                startSimulation = true;
+                moveIndex = 0;
+                createGuardian(randomX);
+                startUpdateTimer((int)estimateWorstCaseCycleMillis(Creatures));
+            }
         }
     }
+
+    public long estimateWorstCaseCycleMillis(List<Creature> aux) {
+        int maxDistance = getWidth() - CREATURE_SIZE;
+        int spdX = 1; // ou você pode parametrizar isso por criatura
+        int delayMs = 1; // mesmo valor usado no phisycsTimer
+
+        int creatureCount;
+
+        creatureCount = aux.size();
+
+
+        long timePerCreature = maxDistance / spdX;
+        return creatureCount * timePerCreature * delayMs;
+    }
+
 
     public void stopSimulation(){
         startSimulation = false;

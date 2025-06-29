@@ -55,7 +55,7 @@ public class SimulationController {
 
             frame.setVisible(true);
             CreaturesPanel.startPhisycsTimer();
-            CreaturesPanel.startUpdateTimer();
+            //CreaturesPanel.startUpdateTimer();
         } catch (Exception e) {
         }
     }
