@@ -41,6 +41,8 @@ public class CreaturesPanel extends JPanel {
     /** Força vertical aplicada no "pulo" das bolas. */
     private final int jumpForce = -15;
 
+    private static int creaturesMove = 0;
+
     /** Gerador de números aleatórios para movimentação e cálculo de alvo. */
     private Random rand = new Random();
 
@@ -54,8 +56,6 @@ public class CreaturesPanel extends JPanel {
 
     /** Índice atual da bola que está se movendo. */
     private static int moveIndex = 0;
-
-    private static int ticksCount = 0;
 
     private static int ticksToCompleteCycle;
     /**
@@ -86,31 +86,22 @@ public class CreaturesPanel extends JPanel {
             label.setHorizontalAlignment(SwingConstants.CENTER);
 
             Creature newCreature = new Creature(posX, groundY, spdX, spdY, label);
-
+            setLabelText(newCreature);
             if (Creatures.isEmpty()) {
                 Creatures.add(newCreature);
-                label.setText("R$ " + (newCreature.money / 100.0));
                 newCreature.x = calcNextPosition(newCreature);
-                newCreature.x = Math.max(0, Math.min(newCreature.target + rand.nextInt(40) - 20, getWidth() - CREATURE_SIZE));
-                this.add(label);
-                this.setComponentZOrder(label, 0);
+                newCreature.target = calcNextPosition(newCreature);
             } else {
                 Creature last = Creatures.getLast();
                 if (!last.isGuardian) {
                     Creatures.add(newCreature);
-                    label.setText("R$ " + (newCreature.money / 100.0));
                     newCreature.x = calcNextPosition(newCreature);
-                    newCreature.target = newCreature.x;
-                    this.add(label);
-                    this.setComponentZOrder(label, 0);
+                    newCreature.target = calcNextPosition(newCreature);
                 } else {
                     Creatures.removeLast(); // remove o guardião temporariamente
                     Creatures.add(newCreature);
-                    label.setText("R$ " + (newCreature.money / 100.0));
                     newCreature.x = calcNextPosition(newCreature);
-                    newCreature.target = newCreature.x;
-                    this.add(label);
-                    this.setComponentZOrder(label, 0);
+                    newCreature.target = calcNextPosition(newCreature);
                     Creatures.add(last); // reinserir o guardião
                 }
             }
@@ -132,8 +123,6 @@ public class CreaturesPanel extends JPanel {
 
                 Creature cluster = new Creature(creaturesColliding.getFirst().x, groundY - 20, 1, 0, label);
                 cluster.isCluster = true;
-                cluster.target = cluster.x;
-
 
                 for (Creature aux : creaturesColliding) {
                     cluster.money += aux.money;
@@ -147,14 +136,8 @@ public class CreaturesPanel extends JPanel {
                 Creatures.add(cluster);
                 cluster.target = calcNextPosition(cluster);
                 cluster.canMove = true;
-                System.err.println("Criou novo cluster");
+                setLabelText(cluster);
                 Creatures.add(guardian);
-
-                guardian.label.setText("R$ " + (guardian.money / 100));
-                this.add(guardian.label);
-                label.setText("R$ " + (cluster.money / 100.0));
-                this.add(label);
-                this.setComponentZOrder(label, 0);
             }
         }
     }
@@ -168,13 +151,11 @@ public class CreaturesPanel extends JPanel {
             label.setForeground(Color.WHITE);
             label.setBounds(posX, groundY - 20, CREATURE_SIZE, 20);
             label.setHorizontalAlignment(SwingConstants.CENTER);
-
-            Creatures.add(new Guardian(posX, groundY, spdX, spdY, label));
-            label.setText("R$ " + (Creatures.getLast().money / 100.0));
-            //Creatures.getLast().x = calcNextPosition(Creatures.getLast());
-            Creatures.getLast().target = Creatures.getLast().x;
-            this.add(label);
-            this.setComponentZOrder(label, 0);
+            Guardian guardian = new Guardian(posX, groundY, spdX, spdY, label);
+            setLabelText(guardian);
+            Creatures.add(guardian);
+            guardian.x = calcNextPosition(Creatures.getLast());
+            guardian.target = Creatures.getLast().x;
         }
     }
 
@@ -265,7 +246,6 @@ public class CreaturesPanel extends JPanel {
      */
     public boolean update() {
         synchronized (Creatures) {
-
             interacao++;
             canUpdate = !canUpdate;
 
@@ -273,13 +253,12 @@ public class CreaturesPanel extends JPanel {
                 return false;
             }
 
-            for (Creature Creature : Creatures) {
-                if (Creature.canTheft) {
-                    thiefNeighbor(Creature);
-                    Creature.canMove = true;
+            for (Creature creature : Creatures) {
+                if (creature.canTheft && !creature.isGuardian) {
+                    thiefNeighbor(creature);
+                    creature.canMove = true;
                 }
             }
-
             canUpdate = !canUpdate;
             return true;
         }
@@ -304,8 +283,15 @@ public class CreaturesPanel extends JPanel {
             List<Creature> snapshot; //Copia da lista de criaturas para evitar erros
             snapshot = new ArrayList<>(Creatures);
 
-
             if (canUpdate) {
+                if(creaturesMove >= snapshot.size()){
+                    System.err.println(creaturesMove + " / " + snapshot.size() + " / " + moveIndex);
+                    checkCluster();
+                    checkGuardian();
+                    creaturesMove = 0;
+                    snapshot = new ArrayList<>(Creatures);
+                    System.err.println(creaturesMove + " / " + snapshot.size() + " / " + moveIndex);
+                }
 
                 for (Creature creature : snapshot) {
                     // Atualização vertical (PULO) se nao for cluster
@@ -329,6 +315,7 @@ public class CreaturesPanel extends JPanel {
                         moving.label.setForeground(new Color(255, 0, 0));
                         if (moving.x == moving.target) {
                             moving.canMove = false;
+                            creaturesMove++;
                         }
 
                         if (moving.x != moving.target) {
@@ -340,28 +327,23 @@ public class CreaturesPanel extends JPanel {
                         } else if (moving.target < moving.x) {
                             moving.x -= moving.spdX;
                         }
+
                     } else if(startSimulation) {
                         moving.label.setForeground(new Color(255, 255, 255));
-                        System.out.println("Size: " + snapshot.size() + " / Index: " + moveIndex);
                         moveIndex = (moveIndex + 1) % snapshot.size();
-                        //System.out.println("Index: " + moveIndex);
-                        //System.out.println("X: " + getLast().x + " / Target: " + getLast().target);
+
+                        if (moveIndex >= snapshot.size() - 1 && startSimulation) {
+                            for (Creature aux : snapshot) {
+                                aux.canTheft = true; //Autoriza criaturas a roubar novamente
+                            }
+                            moveIndex = 0;
+                        }
+
                     }
 
-                    creature.label.setText("R$ " + (creature.money / 100.0));
+                    setLabelText(creature);
                     creature.label.setBounds(creature.x, creature.y - 20, CREATURE_SIZE, 20);
                 }
-
-                if (moveIndex == 0 && startSimulation) {
-                    System.err.println("ENTREI");
-                    checkCluster(); //Checa se precisa criar clusters
-                    checkGuardian();
-
-                    for (Creature aux : snapshot) {
-                        aux.canTheft = true; //Autoriza criaturas a roubar novamente
-                    }
-                }
-
             }
 
             repaint();
@@ -387,15 +369,10 @@ public class CreaturesPanel extends JPanel {
                         removeCreature(c);
                     }
                     this.remove(guardian.label);
-                    guardian.label.setText("R$: " + (guardian.money / 100));
-                    this.add(guardian.label);
-
-                    System.err.println("Guardião 'matou' cluster");
-                    guardian.target = calcNextPosition(guardian);
-                    guardian.canMove = true;
+                   setLabelText(guardian);
+                   guardian.target = calcNextPosition(guardian);
+                   guardian.canMove = true;
                 }
-            }else{
-                System.err.println("Não possui guardião");
             }
         }
     }
@@ -432,10 +409,7 @@ public class CreaturesPanel extends JPanel {
         for (List<Creature> grupo : group) {
             createCluster(new ArrayList<>(grupo));
         }
-
-        System.out.println(Creatures.size());
     }
-
 
     /**
      * Renderiza as bolas no painel.
@@ -512,21 +486,6 @@ public class CreaturesPanel extends JPanel {
         }
     }
 
-    public long estimateWorstCaseCycleMillis(List<Creature> aux) {
-        int maxDistance = getWidth() - CREATURE_SIZE;
-        int spdX = 1; // ou você pode parametrizar isso por criatura
-        int delayMs = 1; // mesmo valor usado no phisycsTimer
-
-        int creatureCount;
-
-        creatureCount = aux.size();
-
-
-        long timePerCreature = maxDistance / spdX;
-        return creatureCount * timePerCreature * delayMs;
-    }
-
-
     public void stopSimulation(){
         startSimulation = false;
         updateTimer.stop();
@@ -557,5 +516,11 @@ public class CreaturesPanel extends JPanel {
         int maxX = 1000000;
         int range = maxX - minX;
         return (noNormalizedTarget - minX) / range;
+    }
+
+    public void setLabelText(Creature aux){
+        aux.label.setText("R$ " + (aux.money / 1000));
+        this.add(aux.label);
+        this.setComponentZOrder(aux.label, 0);
     }
 }
