@@ -38,6 +38,7 @@ public class SimulationView extends JFrame {
             this.setSize(WIDTH, HEIGHT);
             this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             this.setLayout(null);
+            this.setLocationRelativeTo(null);
             this.setResizable(false);
 
 

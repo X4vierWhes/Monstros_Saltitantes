@@ -289,11 +289,12 @@ public class CreaturesPanel extends JPanel {
                     checkCluster();
                     checkGuardian();
                     creaturesMove = 0;
+                    moveIndex = 0;
                     snapshot = new ArrayList<>(Creatures);
-                    System.err.println(creaturesMove + " / " + snapshot.size() + " / " + moveIndex);
 
                     for (Creature aux : snapshot) {
                         aux.canTheft = true;
+                        aux.canMove = false;
                     }
                 }
 

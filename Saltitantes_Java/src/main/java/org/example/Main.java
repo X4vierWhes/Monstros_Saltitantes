@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.controller.LoginController;
 import org.example.controller.SimulationController;
 
 /**
@@ -8,10 +9,11 @@ import org.example.controller.SimulationController;
 public class Main {
 
     public static SimulationController simulation;
+    public static LoginController login;
 
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(() -> {
-            simulation = new SimulationController();
+            login = new LoginController();
         });
     }
 }
