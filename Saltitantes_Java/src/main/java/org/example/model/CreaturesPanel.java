@@ -88,7 +88,7 @@ public class CreaturesPanel extends JPanel {
                 Creatures.add(newCreature);
                 label.setText("R$ " + (newCreature.money / 100.0));
                 newCreature.x = calcNextPosition(newCreature);
-                newCreature.target = newCreature.x;
+                newCreature.x = Math.max(0, Math.min(newCreature.target + rand.nextInt(40) - 20, getWidth() - CREATURE_SIZE));
                 this.add(label);
                 this.setComponentZOrder(label, 0);
             } else {
@@ -179,7 +179,7 @@ public class CreaturesPanel extends JPanel {
      * Inicia o timer de atualização lógica (roubos e movimentação).
      */
     public void startUpdateTimer() {
-        updateTimer = new Timer(2500, e -> update());
+        updateTimer = new Timer(5000, e -> update());
         updateTimer.start();
     }
 
@@ -187,7 +187,7 @@ public class CreaturesPanel extends JPanel {
      * Inicia o timer de atualização física (gravidade e pulo).
      */
     public void startPhisycsTimer() {
-        phisycsTimer = new Timer(10, e -> phisycsUpdate());
+        phisycsTimer = new Timer(1, e -> phisycsUpdate());
         phisycsTimer.start();
     }
 
@@ -197,12 +197,14 @@ public class CreaturesPanel extends JPanel {
      * @return true se todas as bolas estão paradas, senão false.
      */
     public boolean isCanUpdate() {
-        for (Creature Creature : Creatures) {
-            if (Creature.canMove) {
-                return false;
+        synchronized (Creatures) {
+            for (Creature Creature : Creatures) {
+                if (Creature.canMove) {
+                    return false;
+                }
             }
+            return true;
         }
-        return true;
     }
 
     /**
@@ -311,25 +313,17 @@ public class CreaturesPanel extends JPanel {
                         creature.spdY = jumpForce;
                     }
 
-                    // Atualização horizontal (movimento em direção ao alvo)
-                    if (moveIndex > snapshot.size()) {
+                    if (moveIndex >= snapshot.size()) {
                         moveIndex = 0;
                     }
 
+                    // Atualização horizontal (movimento em direção ao alvo)
                     Creature moving = snapshot.get(moveIndex); //Criatura que vai se mover
+
                     if (moving.canMove && startSimulation) {
                         moving.label.setForeground(new Color(255, 0, 0));
                         if (moving.x == moving.target) {
                             moving.canMove = false;
-
-                            if (moveIndex == snapshot.size() - 1) {
-                                System.err.println("Entrei");
-                                checkCluster(); //Checa se precisa criar clusters
-                                checkGuardian();
-                                for (Creature aux : snapshot) {
-                                    aux.canTheft = true; //Autoriza criaturas a roubar novamente
-                                }
-                            }
                         }
 
                         if (moving.x != moving.target) {
@@ -341,9 +335,9 @@ public class CreaturesPanel extends JPanel {
                         } else if (moving.target < moving.x) {
                             moving.x -= moving.spdX;
                         }
-                    } else {
+                    } else if(startSimulation) {
                         moving.label.setForeground(new Color(255, 255, 255));
-                        System.out.println("Size: " + snapshot.size());
+                        System.out.println("Size: " + snapshot.size() + " / Index: " + moveIndex);
                         moveIndex = (moveIndex + 1) % snapshot.size();
                         //System.out.println("Index: " + moveIndex);
                         //System.out.println("X: " + getLast().x + " / Target: " + getLast().target);
@@ -352,6 +346,18 @@ public class CreaturesPanel extends JPanel {
                     creature.label.setText("R$ " + (creature.money / 100.0));
                     creature.label.setBounds(creature.x, creature.y - 20, CREATURE_SIZE, 20);
                 }
+
+
+                if (moveIndex == 0 && startSimulation) {
+                    System.err.println("ENTREI");
+                    checkCluster(); //Checa se precisa criar clusters
+                    checkGuardian();
+
+                    for (Creature aux : snapshot) {
+                        aux.canTheft = true; //Autoriza criaturas a roubar novamente
+                    }
+                }
+
             }
 
             repaint();
@@ -494,6 +500,7 @@ public class CreaturesPanel extends JPanel {
     public void initSimulation(int randomX) {
         if(!startSimulation) {
             startSimulation = true;
+            moveIndex = 0;
             createGuardian(randomX);
         }
     }
