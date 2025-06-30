@@ -42,7 +42,7 @@ public class LoginController {
             });
         } else {
             view.getStatusLabel().setForeground(Color.RED);
-            view.getStatusLabel().setText("Usuário ou passWord inválidos.");
+            view.getStatusLabel().setText("Usuário ou password inválidos.");
         }
         
     }

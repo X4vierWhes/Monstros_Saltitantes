@@ -40,7 +40,7 @@ public class LoginView extends JFrame{
     private void initComponents() {
         ///////////////////////////////////////////////////////////////////////////////////
         //Adicionando Label principal
-        JLabel titleLabel = new JLabel("Tela de Login");
+        JLabel titleLabel = new JLabel("SIMULATION");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setBounds(WIDTH / 2 - 100, 30, 200, 30);
         titleLabel.setForeground(textColor);

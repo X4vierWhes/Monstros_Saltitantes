@@ -246,6 +246,10 @@ public class CreaturesPanel extends JPanel {
      */
     public boolean update() {
         synchronized (Creatures) {
+            if(Creatures.size() <= 2 && startSimulation){
+                stopSimulation();
+                JOptionPane.showMessageDialog(this, "FIM DA SIMULAÇÃO!");
+            }
             interacao++;
             canUpdate = !canUpdate;
 
@@ -274,10 +278,6 @@ public class CreaturesPanel extends JPanel {
         synchronized (Creatures) {
             if (Creatures.isEmpty()) {
                 return false;
-            }
-
-            if(Creatures.size() <= 2 && startSimulation){
-                stopSimulation();
             }
 
             List<Creature> snapshot; //Copia da lista de criaturas para evitar erros
