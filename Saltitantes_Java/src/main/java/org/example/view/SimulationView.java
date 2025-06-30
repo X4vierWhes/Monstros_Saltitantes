@@ -2,6 +2,7 @@ package org.example.view;
 
 import org.example.controller.SimulationController;
 import org.example.model.CreaturesPanel;
+import org.example.model.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,11 +29,14 @@ public class SimulationView extends JFrame {
     /** Gerador de números aleatórios para posições. */
     private Random rand = new Random();
 
+    private User user;
+
     /**
      * Inicializa a tela principal, cria o painel de bolas, adiciona botões e inicia os timers.
      */
-    public  SimulationView() {
+    public  SimulationView(User user) {
         try {
+            this.user = user;
             /** Janela principal do aplicativo. */
             this.setTitle("Saltitantes");
             this.setSize(WIDTH, HEIGHT);
@@ -43,10 +47,29 @@ public class SimulationView extends JFrame {
 
 
             // Painel de simulação
-            this.creaturesPanel = new CreaturesPanel(WIDTH, HEIGHT);
+            this.creaturesPanel = new CreaturesPanel(WIDTH, HEIGHT, user);
             this.creaturesPanel.setLayout(null);
             this.creaturesPanel.setBounds(0, 0, WIDTH, HEIGHT);
             this.add(creaturesPanel);
+
+            ImageIcon imageIcon = user.getAVATAR();
+            JLabel avatarLabel = new JLabel(imageIcon);
+            avatarLabel.setBorder(BorderFactory.createLineBorder(new Color(255,0,129)));
+
+            JPanel avatarPanel = new JPanel();
+            avatarPanel.setLayout(new BorderLayout());
+            avatarPanel.setBounds(WIDTH / 25, HEIGHT / 25, 100, 100);
+            avatarPanel.setOpaque(false);
+            avatarPanel.add(avatarLabel, BorderLayout.CENTER);
+            creaturesPanel.add(avatarPanel);
+            creaturesPanel.setComponentZOrder(avatarPanel, 0);
+
+
+            JLabel userLabel = new JLabel("User: " + user.getUserName());
+            userLabel.setBounds(WIDTH / 25, HEIGHT / 25 + 110, 150, 25);
+            userLabel.setForeground(new Color(255,0,129));
+            creaturesPanel.add(userLabel);
+            creaturesPanel.setComponentZOrder(userLabel, 0);
 
             addBallButton();
             addInitButton();

@@ -12,7 +12,7 @@ public class LoginView extends JFrame{
     /** Altura da janela. */
     private static final int HEIGHT = 480;
 
-    private static final int fieldWidth = 200;
+    private static final int fieldWidth = 210;
 
     private static final int fieldHeight = 25;
 
@@ -21,6 +21,7 @@ public class LoginView extends JFrame{
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton loginButton;
+    private JButton signInButton;
     private JLabel statusLabel;
 
     private static final Color textColor = new Color(255,0, 129);
@@ -61,14 +62,20 @@ public class LoginView extends JFrame{
         add(passLabel);
 
         passwordField = new JPasswordField();
-        passwordField.setBounds(WIDTH / 2 - 120, HEIGHT / 3, 200, 25);
+        passwordField.setBounds(WIDTH / 2 - 120, HEIGHT / 3, fieldWidth, fieldHeight);
         add(passwordField);
 
         loginButton = new JButton("Entrar");
-        loginButton.setBounds(WIDTH/2 - 75 , 200, buttonWIDTH, buttonHEIGHT);
+        loginButton.setBounds(WIDTH/2 - 120, 200, buttonWIDTH, buttonHEIGHT);
         loginButton.setBackground(textColor);
         loginButton.setForeground(Color.WHITE);
         add(loginButton);
+
+        signInButton = new JButton("Sign-in");
+        signInButton.setBounds(WIDTH/2 - 10, 200, buttonWIDTH, buttonHEIGHT);
+        signInButton.setBackground(textColor);
+        signInButton.setForeground(Color.WHITE);
+        add(signInButton);
 
         statusLabel = new JLabel("");
         statusLabel.setBounds(WIDTH/2 - 100 , 225, 300, 25);
@@ -86,6 +93,10 @@ public class LoginView extends JFrame{
 
     public JButton getLoginButton() {
         return loginButton;
+    }
+
+    public JButton getSignInButtonButton() {
+        return signInButton;
     }
 
     public JLabel getStatusLabel() {

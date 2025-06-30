@@ -10,6 +10,7 @@ public class User {
     private ImageIcon AVATAR;
     private int SIMULATIONS;
     private int SUCCESS_SIMULATIONS;
+    private boolean isAdm = false;
 
     public User(String username, String password, String avatarName){
         this.USERNAME = username;
@@ -54,4 +55,11 @@ public class User {
         return (float) this.SUCCESS_SIMULATIONS/this.SIMULATIONS;
     }
 
+    public boolean isAdm() {
+        return isAdm;
+    }
+
+    public void setAdm(boolean adm) {
+        isAdm = adm;
+    }
 }

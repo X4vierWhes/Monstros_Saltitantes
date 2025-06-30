@@ -57,14 +57,15 @@ public class CreaturesPanel extends JPanel {
     /** Índice atual da bola que está se movendo. */
     private static int moveIndex = 0;
 
-    private static int ticksToCompleteCycle;
+   private User user;
     /**
      * Construtor do painel de bolas.
      *
      * @param width  Largura do painel.
      * @param height Altura do painel.
      */
-    public CreaturesPanel(int width, int height) {
+    public CreaturesPanel(int width, int height, User user) {
+        this.user = user;
         setBackground(Color.BLACK);
         setPreferredSize(new Dimension(width, height));
         groundY = height - CREATURE_SIZE - 40;
@@ -98,11 +99,11 @@ public class CreaturesPanel extends JPanel {
                     newCreature.x = calcNextPosition(newCreature);
                     newCreature.target = calcNextPosition(newCreature);
                 } else {
-                    Creatures.removeLast(); // remove o guardião temporariamente
+                    Creatures.removeLast();
                     Creatures.add(newCreature);
                     newCreature.x = calcNextPosition(newCreature);
                     newCreature.target = calcNextPosition(newCreature);
-                    Creatures.add(last); // reinserir o guardião
+                    Creatures.add(last);
                 }
             }
         }

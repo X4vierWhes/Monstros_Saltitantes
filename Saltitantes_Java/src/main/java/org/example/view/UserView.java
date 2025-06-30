@@ -45,15 +45,20 @@ public class UserView extends JFrame {
 
         avatarPanel = new JPanel();
         avatarPanel.setLayout(new BorderLayout());
-        avatarPanel.setBounds(WIDTH/25, HEIGHT/25, 100, 100);
+        avatarPanel.setBounds(WIDTH / 25, HEIGHT / 25, 100, 100);
         avatarPanel.setOpaque(false);
         avatarPanel.add(avatarLabel, BorderLayout.CENTER);
         this.add(avatarPanel);
 
         JLabel userLabel = new JLabel("User: " + user.getUserName());
-        userLabel.setBounds(WIDTH/25, HEIGHT/25 + 100, 100, 25 );
+        userLabel.setBounds(WIDTH / 25, HEIGHT / 25 + 110, 150, 25);
         userLabel.setForeground(color);
         this.add(userLabel);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        buttonPanel.setOpaque(false);
+        buttonPanel.setBounds(WIDTH / 2, HEIGHT / 25, btnWIDTH, 3 * (btnHEIGHT + 10));
 
         initButton = new JButton("Iniciar");
         resultButton = new JButton("Resultados");
@@ -61,23 +66,17 @@ public class UserView extends JFrame {
 
         JButton[] buttons = {initButton, resultButton, quitButton};
 
-        int heightIn = 75;
-        int fuse = 0;
-
-        for(JButton b: buttons){
+        for (JButton b : buttons) {
+            b.setMaximumSize(new Dimension(btnWIDTH, btnHEIGHT));
+            b.setAlignmentX(Component.CENTER_ALIGNMENT);
             b.setBackground(color);
             b.setForeground(Color.WHITE);
-            b.setBounds(WIDTH/2, HEIGHT/heightIn + fuse, btnWIDTH, btnHEIGHT);
-            heightIn -= 25;
-            fuse = btnHEIGHT + 10;
-            this.add(b);
+            b.setFocusable(false);
+            buttonPanel.add(b);
+            buttonPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Espaçamento
         }
-    }
 
-    public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(() -> {
-            UserView view = new UserView(new User("Whesley", "1234", "dog"));
-        });
+        this.add(buttonPanel);
     }
 
     public JButton getInitButton() {

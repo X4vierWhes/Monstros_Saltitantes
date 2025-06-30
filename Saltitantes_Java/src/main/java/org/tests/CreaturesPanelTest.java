@@ -2,6 +2,7 @@ package org.tests;
 
 import org.example.model.Creature;
 import org.example.model.CreaturesPanel;
+import org.example.model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,9 +46,9 @@ public class CreaturesPanelTest {
     @BeforeEach
     void setUp() {
         JFrame frame = new JFrame();
-
+        User user = new User("Whesley", "1234", "dog");
         randi = new Random();
-        panel = new CreaturesPanel(width, height);
+        panel = new CreaturesPanel(width, height, user);
         frame.add(panel);
         frame.pack();
         System.out.println(panel.getWidth());

@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.model.User;
 import org.example.view.LoginView;
 
 import javax.swing.*;
@@ -9,7 +10,7 @@ import java.awt.event.ActionListener;
 
 public class LoginController {
     private LoginView view;
-    private SimulationController simulation;
+    private UserController user;
 
     public LoginController(){
         view = new LoginView();
@@ -23,6 +24,17 @@ public class LoginController {
                 login();
             }
         });
+
+        view.getSignInButtonButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                signIn();
+            }
+        });
+    }
+
+    private void signIn(){
+
     }
 
     private void login(){
@@ -38,7 +50,7 @@ public class LoginController {
             view.dispose();
 
             javax.swing.SwingUtilities.invokeLater(() -> {
-                simulation = new SimulationController();
+                user = new UserController(new User(userName, passWord, "dog"));
             });
         } else {
             view.getStatusLabel().setForeground(Color.RED);
