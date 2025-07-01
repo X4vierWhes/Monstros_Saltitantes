@@ -2,6 +2,7 @@ package org.example.view;
 
 import org.example.controller.SimulationController;
 import org.example.model.CreaturesPanel;
+import org.example.model.SQLite;
 import org.example.model.User;
 
 import javax.swing.*;
@@ -31,11 +32,14 @@ public class SimulationView extends JFrame {
 
     private User user;
 
+    private SQLite bd;
+
     /**
      * Inicializa a tela principal, cria o painel de bolas, adiciona botões e inicia os timers.
      */
-    public  SimulationView(User user) {
+    public  SimulationView(User user, SQLite bd) {
         try {
+            this.bd = bd;
             this.user = user;
             /** Janela principal do aplicativo. */
             this.setTitle("Saltitantes");
@@ -47,7 +51,7 @@ public class SimulationView extends JFrame {
 
 
             // Painel de simulação
-            this.creaturesPanel = new CreaturesPanel(WIDTH, HEIGHT, user);
+            this.creaturesPanel = new CreaturesPanel(WIDTH, HEIGHT, user, bd);
             this.creaturesPanel.setLayout(null);
             this.creaturesPanel.setBounds(0, 0, WIDTH, HEIGHT);
             this.add(creaturesPanel);

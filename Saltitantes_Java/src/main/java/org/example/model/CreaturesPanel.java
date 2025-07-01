@@ -56,14 +56,22 @@ public class CreaturesPanel extends JPanel {
 
     /** Índice atual da bola que está se movendo. */
     private static int moveIndex = 0;
-
    private User user;
+   private SQLite bd;
     /**
      * Construtor do painel de bolas.
      *
      * @param width  Largura do painel.
      * @param height Altura do painel.
      */
+    public CreaturesPanel(int width, int height, User user, SQLite bd) {
+        this.bd = bd;
+        this.user = user;
+        setBackground(Color.BLACK);
+        setPreferredSize(new Dimension(width, height));
+        groundY = height - CREATURE_SIZE - 40;
+    }
+
     public CreaturesPanel(int width, int height, User user) {
         this.user = user;
         setBackground(Color.BLACK);

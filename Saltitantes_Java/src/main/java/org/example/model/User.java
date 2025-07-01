@@ -8,6 +8,7 @@ public class User {
     private String USERNAME;
     private String PASSWORD;
     private ImageIcon AVATAR;
+    private String AVATAR_NAME;
     private int SIMULATIONS;
     private int SUCCESS_SIMULATIONS;
     private boolean isAdm = false;
@@ -25,6 +26,7 @@ public class User {
     public User(String username, String password, String avatarName, int simulations, int success_simulations){
         this.USERNAME = username;
         this.PASSWORD = password;
+        this.AVATAR_NAME = avatarName;
         ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(
                 "/org/example/images/" + avatarName + ".jpeg")));
         Image scaled = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
@@ -44,6 +46,10 @@ public class User {
         return this.PASSWORD;
     }
 
+    public int getSIMULATIONS(){return SIMULATIONS;}
+
+    public int getSUCCESS_SIMULATIONS(){return SUCCESS_SIMULATIONS;}
+
     public ImageIcon getAVATAR(){
         return this.AVATAR;
     }
@@ -61,5 +67,9 @@ public class User {
 
     public void setAdm(boolean adm) {
         isAdm = adm;
+    }
+
+    public String getAvatarname() {
+        return AVATAR_NAME;
     }
 }

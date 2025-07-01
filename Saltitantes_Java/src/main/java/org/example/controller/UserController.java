@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.model.SQLite;
 import org.example.model.User;
 import org.example.view.UserView;
 
@@ -10,8 +11,10 @@ public class UserController {
     private final UserView view;
     private final User user;
     private SimulationController simulation;
+    private SQLite bd;
 
-    public UserController(User user){
+    public UserController(User user, SQLite bd){
+        this.bd = bd;
         this.view = new UserView(user);
         this.user = user;
         initListeners();
@@ -23,7 +26,17 @@ public class UserController {
             public void actionPerformed(ActionEvent e) {
                 view.dispose();
                 javax.swing.SwingUtilities.invokeLater(() -> {
-                    simulation = new SimulationController(user);
+                    simulation = new SimulationController(user, bd);
+                });
+            }
+        });
+
+        view.getQuitButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                view.dispose();
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    LoginController login = new LoginController();
                 });
             }
         });

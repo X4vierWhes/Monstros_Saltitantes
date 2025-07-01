@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.model.SQLite;
 import org.example.model.User;
 import org.example.view.SimulationView;
 
@@ -8,8 +9,8 @@ public class SimulationController {
     private final SimulationView view;
     private User user;
 
-    public SimulationController(User user) {
-        this.view = new SimulationView(user);
+    public SimulationController(User user, SQLite bd) {
+        this.view = new SimulationView(user, bd);
         this.user = user;
         initListeners();
         view.getCreaturesPanel().addCreature(view.getRandomX());
