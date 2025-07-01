@@ -16,13 +16,15 @@ public class User {
     public User(String username, String password, String avatarName){
         this.USERNAME = username;
         this.PASSWORD = password;
-        this.changeAvatar(avatarName);
+        this.setAvatar(avatarName);
+        this.SIMULATIONS = 0;
+        this.SUCCESS_SIMULATIONS = 0;
     }
 
     public User(String username, String password, String avatarName, int simulations, int success_simulations){
         this.USERNAME = username;
         this.PASSWORD = password;
-        this.changeAvatar(avatarName);
+        this.setAvatar(avatarName);
         this.SIMULATIONS = simulations;
         this.SUCCESS_SIMULATIONS = success_simulations;
     }
@@ -65,11 +67,14 @@ public class User {
         return AVATAR_NAME;
     }
 
-    public void changeAvatar(String avatarname){
+    public void setAvatar(String avatarname){
         this.AVATAR_NAME = avatarname;
         ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(
                 "/org/example/images/" + avatarname + ".jpeg")));
         Image scaled = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
         this.AVATAR = new ImageIcon(scaled);
+    }
+    public void changeAvatar(){
+
     }
 }
