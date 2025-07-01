@@ -12,13 +12,10 @@ public class UserView extends JFrame {
     private static final int WIDTH = 720;
     /** Altura da janela. */
     private static final int HEIGHT = 480;
-
     private static final int btnWIDTH = 150;
     private static final int btnHEIGHT = 70;
     private User user;
-
     private final Vector<String> imgs = new Vector<>(java.util.Arrays.asList("common", "diamond", "dog", "dogs", "lego", "snopanime"));
-
     private JPanel avatarPanel;
     private ImageIcon imageIcon;
     private JButton initButton;
@@ -35,12 +32,11 @@ public class UserView extends JFrame {
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(null);
-        this.getContentPane().setBackground(new Color(0,0,0)); //cor background da tela
+        this.getContentPane().setBackground(new Color(0,0,0));
 
         initComponents();
 
         setVisible(true);
-
     }
 
     private void initComponents() {
@@ -55,7 +51,9 @@ public class UserView extends JFrame {
         avatarPanel.add(avatarLabel, BorderLayout.CENTER);
         this.add(avatarPanel);
 
-        //changeAvatarButton = new JButton();
+        //changeAvatarButton = new JButton("*");
+        //changeAvatarButton.setForeground(color);
+
 
         JLabel userLabel = new JLabel("User: " + user.getUserName());
         userLabel.setBounds(WIDTH / 25, HEIGHT / 25 + 110, 150, 25);
