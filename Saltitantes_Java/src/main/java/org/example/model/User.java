@@ -16,21 +16,13 @@ public class User {
     public User(String username, String password, String avatarName){
         this.USERNAME = username;
         this.PASSWORD = password;
-        ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(
-                "/org/example/images/" + avatarName + ".jpeg")));
-        Image scaled = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        this.AVATAR = new ImageIcon(scaled);
-
+        this.changeAvatar(avatarName);
     }
 
     public User(String username, String password, String avatarName, int simulations, int success_simulations){
         this.USERNAME = username;
         this.PASSWORD = password;
-        this.AVATAR_NAME = avatarName;
-        ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(
-                "/org/example/images/" + avatarName + ".jpeg")));
-        Image scaled = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        this.AVATAR = new ImageIcon(scaled);
+        this.changeAvatar(avatarName);
         this.SIMULATIONS = simulations;
         this.SUCCESS_SIMULATIONS = success_simulations;
     }
@@ -71,5 +63,13 @@ public class User {
 
     public String getAvatarname() {
         return AVATAR_NAME;
+    }
+
+    public void changeAvatar(String avatarname){
+        this.AVATAR_NAME = avatarname;
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource(
+                "/org/example/images/" + avatarname + ".jpeg")));
+        Image scaled = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        this.AVATAR = new ImageIcon(scaled);
     }
 }
