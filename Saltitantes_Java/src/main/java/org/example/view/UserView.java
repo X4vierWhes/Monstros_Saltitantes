@@ -5,6 +5,7 @@ import org.example.model.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Vector;
 
 public class UserView extends JFrame {
     /** Largura da janela. */
@@ -15,12 +16,16 @@ public class UserView extends JFrame {
     private static final int btnWIDTH = 150;
     private static final int btnHEIGHT = 70;
     private User user;
+
+    private final Vector<String> imgs = new Vector<>(java.util.Arrays.asList("common", "diamond", "dog", "dogs", "lego", "snopanime"));
+
     private JPanel avatarPanel;
     private ImageIcon imageIcon;
     private JButton initButton;
     private JButton resultButton;
     private JButton deleteButton;
     private JButton quitButton;
+    private JButton changeAvatarButton;
     private final Color color = new Color(255,0,129);
 
     public UserView(User user){
@@ -49,6 +54,8 @@ public class UserView extends JFrame {
         avatarPanel.setOpaque(false);
         avatarPanel.add(avatarLabel, BorderLayout.CENTER);
         this.add(avatarPanel);
+
+        //changeAvatarButton = new JButton();
 
         JLabel userLabel = new JLabel("User: " + user.getUserName());
         userLabel.setBounds(WIDTH / 25, HEIGHT / 25 + 110, 150, 25);

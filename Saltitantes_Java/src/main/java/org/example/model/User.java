@@ -3,6 +3,7 @@ package org.example.model;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
+import java.util.Vector;
 
 public class User {
     private String USERNAME;
@@ -12,6 +13,8 @@ public class User {
     private int SIMULATIONS;
     private int SUCCESS_SIMULATIONS;
     private boolean isAdm = false;
+
+    private static int index = 0;
 
     public User(String username, String password, String avatarName){
         this.USERNAME = username;
@@ -74,7 +77,8 @@ public class User {
         Image scaled = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
         this.AVATAR = new ImageIcon(scaled);
     }
-    public void changeAvatar(){
-
+    public void changeAvatar(Vector<String> imgs){
+        this.setAvatar(imgs.get(index));
+        index = (index + 1) % imgs.size();
     }
 }
