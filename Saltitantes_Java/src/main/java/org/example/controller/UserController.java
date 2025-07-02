@@ -12,6 +12,7 @@ public class UserController {
     private final UserView view;
     private final User user;
     private SimulationController simulation;
+    private ResultController result;
     private SQLite bd;
 
     public UserController(User user, SQLite bd){
@@ -43,7 +44,10 @@ public class UserController {
         view.getResultButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                view.dispose();
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    result = new ResultController(user, bd);
+                });
             }
         });
 

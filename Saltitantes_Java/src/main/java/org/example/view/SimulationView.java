@@ -27,6 +27,8 @@ public class SimulationView extends JFrame {
 
     private  JButton btnInit;
 
+    private JButton btnQuit;
+
     /** Gerador de números aleatórios para posições. */
     private Random rand = new Random();
 
@@ -77,6 +79,7 @@ public class SimulationView extends JFrame {
 
             addBallButton();
             addInitButton();
+            addQuitButton();
 
             this.setVisible(true);
 
@@ -84,9 +87,22 @@ public class SimulationView extends JFrame {
         }
     }
 
+    private void addQuitButton() {
+        try {
+            btnQuit = new JButton("Voltar");
+            btnQuit.setBounds(WIDTH - 3 * buttonWIDTH - 60, 10, buttonWIDTH, buttonHEIGHT);
+            btnQuit.setBackground(Color.BLUE);
+            btnQuit.setForeground(Color.WHITE);
+            creaturesPanel.add(btnQuit);
+            creaturesPanel.setComponentZOrder(btnQuit, 0);
+        } catch (Exception e) {
+            System.err.println("Não foi possivel adicionar o botão");
+        }
+    }
+
     private void addInitButton() {
         try{
-            btnInit = new JButton("Init");
+            btnInit = new JButton("Iniciar");
             btnInit.setBounds(WIDTH - buttonWIDTH - 20, 10, buttonWIDTH, buttonHEIGHT);
             btnInit.setBackground(Color.BLUE);
             btnInit.setForeground(Color.WHITE);
@@ -102,7 +118,7 @@ public class SimulationView extends JFrame {
      */
     private void addBallButton() {
         try {
-            btnAddBall = new JButton("ADD BALL");
+            btnAddBall = new JButton("Adicionar");
             btnAddBall.setBounds(WIDTH - 2 * buttonWIDTH - 40, 10, buttonWIDTH, buttonHEIGHT);
             btnAddBall.setBackground(Color.BLUE);
             btnAddBall.setForeground(Color.WHITE);
@@ -129,5 +145,9 @@ public class SimulationView extends JFrame {
 
     public int getRandomX() {
         return rand.nextInt(WIDTH - CreaturesPanel.CREATURE_SIZE);
+    }
+
+    public JButton getBtnQuit() {
+        return btnQuit;
     }
 }

@@ -481,6 +481,7 @@ public class CreaturesPanel extends JPanel {
                 startSimulation = true;
                 moveIndex = 0;
                 user.addSimulations();
+                bd.editUserByUsername(user.getUserName(), user);
                 createGuardian(randomX);
                 startUpdateTimer();
             }
