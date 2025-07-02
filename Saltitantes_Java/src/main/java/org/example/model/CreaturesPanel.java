@@ -245,10 +245,6 @@ public class CreaturesPanel extends JPanel {
      */
     public boolean update() {
         synchronized (Creatures) {
-            if(Creatures.size() <= 2 && startSimulation){
-                JOptionPane.showMessageDialog(this, "FIM DA SIMULAÇÃO!");
-                stopSimulation();
-            }
             interacao++;
             canUpdate = !canUpdate;
 
@@ -273,6 +269,11 @@ public class CreaturesPanel extends JPanel {
      * @return true se a atualização ocorreu normalmente, false se não há bolas.
      */
     public boolean phisycsUpdate() {
+        if(Creatures.size() <= 2 && startSimulation){
+            JOptionPane.showMessageDialog(this, "FIM DA SIMULAÇÃO!");
+            stopSimulation();
+            return false;
+        }
 
         synchronized (Creatures) {
             if (Creatures.isEmpty()) {
@@ -294,6 +295,10 @@ public class CreaturesPanel extends JPanel {
                     for (Creature aux : snapshot) {
                         aux.canTheft = true;
                         aux.canMove = false;
+                        if(aux.isGuardian){
+                            aux.canTheft = false;
+                            aux.canMove = true;
+                        }
                     }
                 }
 
