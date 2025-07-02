@@ -26,7 +26,7 @@ public class Creature {
     int spdX = 0;
 
     /** Dinheiro associado à bola. */
-    public double money = 1000000;
+    public double gold = 1000000;
 
     /** Indica se a bola pode se mover. */
     public boolean canMove = false;

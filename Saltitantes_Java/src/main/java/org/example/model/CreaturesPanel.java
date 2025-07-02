@@ -134,8 +134,9 @@ public class CreaturesPanel extends JPanel {
                 cluster.isCluster = true;
 
                 for (Creature aux : creaturesColliding) {
-                    cluster.money += aux.money;
+                    cluster.gold += aux.gold;
                     this.remove(aux.label);
+                    user.addPoints(20.0);
                 }
 
                 // Remove todas as criaturas que participaram da fusão
@@ -153,8 +154,12 @@ public class CreaturesPanel extends JPanel {
 
     private void createGuardian(int posX){
         synchronized (Creatures){
+            if(this.getLast().isGuardian){
+                System.err.println("Só pode ter um guardião");
+                return;
+            }
             int spdX = 1;
-            int spdY = rand.nextInt(6) - 3;
+            int spdY = 1;
 
             JLabel label = new JLabel();
             label.setForeground(Color.WHITE);
@@ -166,22 +171,6 @@ public class CreaturesPanel extends JPanel {
             guardian.x = calcNextPosition(Creatures.getLast());
             guardian.target = Creatures.getLast().x;
         }
-    }
-
-    /**
-     * Inicia o timer de atualização lógica (roubos e movimentação).
-     */
-    public void startUpdateTimer() {
-        updateTimer = new Timer(5000, e -> update());
-        updateTimer.start();
-    }
-
-    /**
-     * Inicia o timer de atualização física (gravidade e pulo).
-     */
-    public void startPhisycsTimer() {
-        phisycsTimer = new Timer(1, e -> phisycsUpdate());
-        phisycsTimer.start();
     }
 
     /**
@@ -223,13 +212,14 @@ public class CreaturesPanel extends JPanel {
                         if (aux_distance <= closest_distance) {
                             closest_distance = aux_distance;
                             closerIndex = index;
+                            user.addPoints(5.0);
                         }
                     }
                     index++;
                 }
 
-                thief.money += Creatures.get(closerIndex).money / 2;
-                Creatures.get(closerIndex).money /= 2;
+                thief.gold += Creatures.get(closerIndex).gold / 2;
+                Creatures.get(closerIndex).gold /= 2;
 
                 thief.target = calcNextPosition(thief);
                 Creatures.get(closerIndex).target = calcNextPosition(Creatures.get(closerIndex));
@@ -245,7 +235,7 @@ public class CreaturesPanel extends JPanel {
      * @return Valor alvo em coordenadas lógicas.
      */
     public double calcTarget(Creature Creature) {
-        return Creature.x + (rand.nextDouble(2) - 1) * Creature.money;
+        return Creature.x + (rand.nextDouble(2) - 1) * Creature.gold;
     }
 
     /**
@@ -256,8 +246,8 @@ public class CreaturesPanel extends JPanel {
     public boolean update() {
         synchronized (Creatures) {
             if(Creatures.size() <= 2 && startSimulation){
-                stopSimulation();
                 JOptionPane.showMessageDialog(this, "FIM DA SIMULAÇÃO!");
+                stopSimulation();
             }
             interacao++;
             canUpdate = !canUpdate;
@@ -374,13 +364,15 @@ public class CreaturesPanel extends JPanel {
 
                 for(Creature c: Creatures){
                     if(c.isCluster && Math.abs(c.x - guardian.x) <= fuseDistance){
-                        guardian.money += c.money;
+                        guardian.gold += c.gold;
                         toRemove.add(c);
                     }
                 }
                 if(!toRemove.isEmpty()) {
+                    guardian.x = toRemove.getLast().x;
                     for (Creature c : toRemove) {
                         removeCreature(c);
+                        user.addPoints(50.0);
                     }
                     this.remove(guardian.label);
                     setLabelText(guardian);
@@ -440,18 +432,7 @@ public class CreaturesPanel extends JPanel {
                 g.fillRect(creature.x, creature.y, CREATURE_SIZE, CREATURE_SIZE);
             }else if(creature.isGuardian){
                 g.setColor(new Color(0, 255, 0));
-                int halfSize = CREATURE_SIZE / 2;
-                int[] xPoints = {
-                        creature.x + halfSize,
-                        creature.x,
-                        creature.x + CREATURE_SIZE
-                };
-                int[] yPoints = {
-                        creature.y,
-                        creature.y + CREATURE_SIZE,
-                        creature.y + CREATURE_SIZE
-                };
-                g.fillPolygon(xPoints, yPoints, 3);
+                g.fillRect(creature.x, creature.y, CREATURE_SIZE, CREATURE_SIZE);
             }else{
                 g.setColor(new Color(0,0,255));
                 g.fillOval(creature.x, creature.y, CREATURE_SIZE, CREATURE_SIZE);
@@ -466,7 +447,7 @@ public class CreaturesPanel extends JPanel {
      */
     public boolean removeCreature(Creature remove) {
         synchronized (Creatures) {
-            if (Creatures.size() <= 1) {
+            if (Creatures.size() <= 1 || remove.isGuardian) {
                 return false;
             }
             this.remove(remove.label);
@@ -494,6 +475,7 @@ public class CreaturesPanel extends JPanel {
             if(!startSimulation) {
                 startSimulation = true;
                 moveIndex = 0;
+                user.addSimulations();
                 createGuardian(randomX);
                 startUpdateTimer();
             }
@@ -504,6 +486,19 @@ public class CreaturesPanel extends JPanel {
         startSimulation = false;
         updateTimer.stop();
         phisycsTimer.stop();
+
+        System.err.println(user.getSIMULATIONS() + " / " + user.getPoints() + " / " + user.getSUCCESS_SIMULATIONS());
+
+        String msg;
+        if(user.getPoints() >= 500){
+            user.addSuccesSimulations();
+            msg = "Pontos superaram a marca de 500, VITORIA!!!!";
+        }else{
+            msg = "pontos não superaram a marca de 500,DERROTA!!!!";
+        }
+        System.err.println(user.getSIMULATIONS() + " / " + user.getPoints() + " / " + user.getSUCCESS_SIMULATIONS());
+        JOptionPane.showMessageDialog(this, msg);
+        bd.editUserByUsername(user.getUserName(), user);
     }
 
     /**
@@ -533,8 +528,26 @@ public class CreaturesPanel extends JPanel {
     }
 
     public void setLabelText(Creature aux){
-        aux.label.setText("R$ " + (aux.money / 1000));
+        aux.label.setText("R$ " + (aux.gold / 1000));
         this.add(aux.label);
         this.setComponentZOrder(aux.label, 0);
     }
+
+
+    /**
+     * Inicia o timer de atualização lógica (roubos e movimentação).
+     */
+    public void startUpdateTimer() {
+        updateTimer = new Timer(5000, e -> update());
+        updateTimer.start();
+    }
+
+    /**
+     * Inicia o timer de atualização física (gravidade e pulo).
+     */
+    public void startPhisycsTimer() {
+        phisycsTimer = new Timer(10, e -> phisycsUpdate());
+        phisycsTimer.start();
+    }
+
 }

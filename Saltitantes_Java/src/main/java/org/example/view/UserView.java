@@ -51,8 +51,11 @@ public class UserView extends JFrame {
         avatarPanel.add(avatarLabel, BorderLayout.CENTER);
         this.add(avatarPanel);
 
-        //changeAvatarButton = new JButton("*");
-        //changeAvatarButton.setForeground(color);
+        changeAvatarButton = new JButton("*");
+        changeAvatarButton.setForeground(Color.WHITE);
+        changeAvatarButton.setBounds(WIDTH/ 25, HEIGHT /25, 25, 25);
+        changeAvatarButton.setBackground(color);
+        this.add(changeAvatarButton);
 
 
         JLabel userLabel = new JLabel("User: " + user.getUserName());
@@ -67,9 +70,10 @@ public class UserView extends JFrame {
 
         initButton = new JButton("Iniciar");
         resultButton = new JButton("Resultados");
+        deleteButton = new JButton("Deletar");
         quitButton = new JButton("Sair");
 
-        JButton[] buttons = {initButton, resultButton, quitButton};
+        JButton[] buttons = {initButton, resultButton, deleteButton, quitButton};
 
         for (JButton b : buttons) {
             b.setMaximumSize(new Dimension(btnWIDTH, btnHEIGHT));
@@ -84,6 +88,30 @@ public class UserView extends JFrame {
         this.add(buttonPanel);
     }
 
+    public boolean changeAvatar(User user){
+        if(user == null){
+            return false;
+        }
+        this.user = user;
+        this.remove(avatarPanel);
+        this.user.changeAvatar(imgs);
+
+        imageIcon = this.user.getAVATAR();
+        JLabel avatarLabel = new JLabel(imageIcon);
+        avatarLabel.setBorder(BorderFactory.createLineBorder(color));
+
+        avatarPanel = new JPanel();
+        avatarPanel.setLayout(new BorderLayout());
+        avatarPanel.setBounds(WIDTH / 25, HEIGHT / 25, 100, 100);
+        avatarPanel.setOpaque(false);
+        avatarPanel.add(avatarLabel, BorderLayout.CENTER);
+        this.add(avatarPanel);
+        this.revalidate();
+        this.repaint();
+        return true;
+    }
+
+    public JButton getChangeAvatarButton(){return changeAvatarButton;}
     public JButton getInitButton() {
         return initButton;
     }

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Utiliza JUnit 5 como framework de testes.
  * </p>
  *
- * @author SeuNome
+ * @author ValentinaClash
  * @version 1.0
  */
 public class CreaturesPanelTest {
