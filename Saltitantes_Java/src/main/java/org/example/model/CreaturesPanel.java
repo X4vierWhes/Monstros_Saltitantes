@@ -1,5 +1,7 @@
 package org.example.model;
 
+import org.example.controller.UserController;
+
 import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.*;
@@ -21,7 +23,7 @@ public class CreaturesPanel extends JPanel {
     /** Tamanho padrão da bola em pixels. */
     public static final int CREATURE_SIZE = 50;
 
-    public static final int fuseDistance = 50; // tolerância em pixels
+    public static final int fuseDistance = 75; // tolerância em pixels
 
     /** Posição Y que representa o chão. */
     private final int groundY;
@@ -120,7 +122,6 @@ public class CreaturesPanel extends JPanel {
     private void createCluster(ArrayList<Creature> creaturesColliding){
         if(creaturesColliding.size() > 1){
             synchronized (Creatures) {
-
                 if(!getLast().isGuardian) return;
                 Creature guardian = getLast();
                 removeCreature(guardian); //Remove temporiarmente o guardião da lista
@@ -269,12 +270,6 @@ public class CreaturesPanel extends JPanel {
      * @return true se a atualização ocorreu normalmente, false se não há bolas.
      */
     public boolean phisycsUpdate() {
-        if(Creatures.size() <= 2 && startSimulation){
-            JOptionPane.showMessageDialog(this, "FIM DA SIMULAÇÃO!");
-            stopSimulation();
-            return false;
-        }
-
         synchronized (Creatures) {
             if (Creatures.isEmpty()) {
                 return false;
@@ -285,19 +280,17 @@ public class CreaturesPanel extends JPanel {
 
             if (canUpdate) {
                 if(creaturesMove >= snapshot.size()){
-                    System.err.println(creaturesMove + " / " + snapshot.size() + " / " + moveIndex);
-                    checkCluster();
+                    //System.err.println(creaturesMove + " / " + snapshot.size() + " / " + moveIndex);
                     checkGuardian();
+                    checkCluster();
                     creaturesMove = 0;
                     moveIndex = 0;
                     snapshot = new ArrayList<>(Creatures);
 
                     for (Creature aux : snapshot) {
-                        aux.canTheft = true;
-                        aux.canMove = false;
-                        if(aux.isGuardian){
-                            aux.canTheft = false;
-                            aux.canMove = true;
+                        if(!aux.isGuardian) { //Guardiao deve continuar se movendo
+                            aux.canTheft = true;
+                            aux.canMove = false;
                         }
                     }
                 }
@@ -356,6 +349,7 @@ public class CreaturesPanel extends JPanel {
             }
 
             repaint();
+            checkEndCondition();
             return true;
         }
     }
@@ -392,33 +386,35 @@ public class CreaturesPanel extends JPanel {
      * Checa se precisa criar novos clusters (duas ou mais criaturas na mesma posição
      */
     private void checkCluster() {
-        List<Creature> left = new ArrayList<>(Creatures); // cópia para controle
-        List<List<Creature>> group = new ArrayList<>();
+        synchronized (Creatures) {
+            List<Creature> left = new ArrayList<>(Creatures); // cópia para controle
+            List<List<Creature>> group = new ArrayList<>();
 
-        while (!left.isEmpty()) {
-            Creature base = left.removeFirst();
+            while (!left.isEmpty()) {
+                Creature base = left.removeFirst();
 
-            if (base.isGuardian) continue;
+                if (base.isGuardian) continue;
 
-            List<Creature> grupo = new ArrayList<>();
-            grupo.add(base);
+                List<Creature> grupo = new ArrayList<>();
+                grupo.add(base);
 
-            Iterator<Creature> it = left.iterator();
-            while (it.hasNext()) {
-                Creature c = it.next();
-                if (!c.isGuardian && Math.abs(c.x - base.x) <= fuseDistance) {
-                    grupo.add(c);
-                    it.remove();
+                Iterator<Creature> it = left.iterator();
+                while (it.hasNext()) {
+                    Creature c = it.next();
+                    if (!c.isGuardian && Math.abs(c.x - base.x) <= fuseDistance) {
+                        grupo.add(c);
+                        it.remove();
+                    }
+                }
+
+                if (grupo.size() > 1) {
+                    group.add(grupo);
                 }
             }
 
-            if (grupo.size() > 1) {
-                    group.add(grupo);
+            for (List<Creature> grupo : group) {
+                createCluster(new ArrayList<>(grupo));
             }
-        }
-
-        for (List<Creature> grupo : group) {
-            createCluster(new ArrayList<>(grupo));
         }
     }
 
@@ -498,13 +494,21 @@ public class CreaturesPanel extends JPanel {
         String msg;
         if(user.getPoints() >= 500){
             user.addSuccesSimulations();
-            msg = "Pontos superaram a marca de 500, VITORIA!!!!";
+            msg = "Objetivo: 500 pontos | Resultado: " + user.getPoints() + " | == Vitoria";
         }else{
-            msg = "pontos não superaram a marca de 500,DERROTA!!!!";
+            msg = "Objetivo: 500 pontos | Resultado: " + user.getPoints() + " | == Derrota";
         }
         System.err.println(user.getSIMULATIONS() + " / " + user.getPoints() + " / " + user.getSUCCESS_SIMULATIONS());
+        user.setPoints(0.0);
         JOptionPane.showMessageDialog(this, msg);
         bd.editUserByUsername(user.getUserName(), user);
+        /*
+        javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            UserController userController = new UserController(user, bd);
+        });
+         */
+
     }
 
     /**
@@ -544,7 +548,7 @@ public class CreaturesPanel extends JPanel {
      * Inicia o timer de atualização lógica (roubos e movimentação).
      */
     public void startUpdateTimer() {
-        updateTimer = new Timer(5000, e -> update());
+        updateTimer = new Timer(3000, e -> update());
         updateTimer.start();
     }
 
@@ -555,5 +559,30 @@ public class CreaturesPanel extends JPanel {
         phisycsTimer = new Timer(10, e -> phisycsUpdate());
         phisycsTimer.start();
     }
+
+    private void checkEndCondition() {
+        synchronized (Creatures) {
+            if (!startSimulation) return;
+
+            int normalCount = 0;
+            Creature normalCreature = null;
+            Creature guardian = null;
+
+            for (Creature c : Creatures) {
+                if (c.isGuardian) {
+                    guardian = c;
+                } else {
+                    normalCount++;
+                    normalCreature = c;
+                }
+            }
+
+            if (normalCount == 1 && guardian != null /*&& guardian.gold > normalCreature.gold*/) {
+                JOptionPane.showMessageDialog(this, "FIM DA SIMULAÇÃO!");
+                stopSimulation();
+            }
+        }
+    }
+
 
 }

@@ -11,10 +11,10 @@ public class ResultController {
     private ResultView view;
     private SQLite bd;
     private User user;
-    public ResultController(User user, SQLite bd){
+    public ResultController(User user){
         this.user = user;
-        this.bd = bd;
-        view = new ResultView(this.user);
+        this.bd = new SQLite();
+        view = new ResultView(this.user, this.bd);
         initListeners();
     }
 
@@ -22,9 +22,10 @@ public class ResultController {
         view.getQuitButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                bd.close();
                 view.dispose();
                 javax.swing.SwingUtilities.invokeLater(() -> {
-                    UserController suser = new UserController(user, bd);
+                    UserController suser = new UserController(user);
                 });
             }
         });

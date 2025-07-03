@@ -13,10 +13,10 @@ public class SimulationController {
     private User user;
     private SQLite bd;
 
-    public SimulationController(User user, SQLite bd) {
-        this.view = new SimulationView(user, bd);
+    public SimulationController(User user) {
         this.user = user;
-        this.bd = bd;
+        this.bd = new SQLite();
+        this.view = new SimulationView(user, this.bd);
         initListeners();
         view.getCreaturesPanel().addCreature(view.getRandomX());
         view.getCreaturesPanel().startPhisycsTimer();
@@ -36,9 +36,10 @@ public class SimulationController {
         view.getBtnQuit().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                bd.close();
                 view.dispose();
                 javax.swing.SwingUtilities.invokeLater(() -> {
-                    UserController userController = new UserController(user, bd);
+                    UserController userController = new UserController(user);
                 });
             }
         });

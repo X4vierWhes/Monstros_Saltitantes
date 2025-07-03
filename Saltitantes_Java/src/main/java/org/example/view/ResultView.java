@@ -1,9 +1,11 @@
 package org.example.view;
 
+import org.example.model.SQLite;
 import org.example.model.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class ResultView extends JFrame {
     /** Largura da janela. */
@@ -17,9 +19,11 @@ public class ResultView extends JFrame {
     private ImageIcon imageIcon;
     private JPanel avatarPanel;
     private JButton quitButton;
+    private SQLite bd;
 
-    public ResultView(User user){
+    public ResultView(User user, SQLite bd){
         this.user = user;
+        this.bd = bd;
         this.setTitle("Tela de Resultados");
         this.setSize(WIDTH, HEIGHT);
         this.setLocationRelativeTo(null);
@@ -69,10 +73,41 @@ public class ResultView extends JFrame {
         successLabel.setForeground(color);
         this.add(successLabel);
 
-        JLabel successrateLabel = new JLabel("Rating de vitórias/sucesso: " + user.getSuccesRate());
+        JLabel successrateLabel = new JLabel("Rating: " + user.getSuccesRate());
         successrateLabel.setBounds(labelX, startY + spacing * 3, 300, 25);
         successrateLabel.setForeground(color);
         this.add(successrateLabel);
+
+        ArrayList<User> allUsers = bd.getAllUsers();
+
+        if (allUsers != null && !allUsers.isEmpty()) {
+            JPanel listPanel = new JPanel();
+            listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
+            listPanel.setOpaque(false);
+
+            for (User u : allUsers) {
+                JLabel label = new JLabel(
+                        u.getUserName() +
+                                " | Sims: " + u.getSIMULATIONS() +
+                                " | Sucesso: " + u.getSUCCESS_SIMULATIONS() +
+                                " | Rating: " + u.getSuccesRate()
+                );
+                label.setForeground(Color.WHITE);
+                label.setAlignmentX(Component.CENTER_ALIGNMENT);
+                listPanel.add(label);
+                listPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Espaçamento entre labels
+            }
+
+            JScrollPane scrollPane = new JScrollPane(listPanel);
+            scrollPane.setBounds(WIDTH/3, HEIGHT / 5, WIDTH / 2, 200);
+            scrollPane.setOpaque(false);
+            scrollPane.getViewport().setOpaque(false);
+            scrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(color),
+                    "Ranking de Usuários", 0, 0, null, color));
+            scrollPane.getVerticalScrollBar().setUnitIncrement(16); // Scroll mais suave
+
+            this.add(scrollPane);
+        }
     }
 
 

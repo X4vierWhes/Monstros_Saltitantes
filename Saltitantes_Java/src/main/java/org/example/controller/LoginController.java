@@ -63,10 +63,10 @@ public class LoginController {
             view.getStatusLabel().setText("Login realizado com sucesso!");
 
             JOptionPane.showMessageDialog(view, "Bem-vindo, " + userName + "!");
-
+            bd.close();
             view.dispose();
             javax.swing.SwingUtilities.invokeLater( () -> {
-                user = new UserController(log, bd);
+                user = new UserController(log);
             });
         }else{
             view.getStatusLabel().setForeground(Color.RED);

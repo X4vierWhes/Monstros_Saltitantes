@@ -15,8 +15,8 @@ public class UserController {
     private ResultController result;
     private SQLite bd;
 
-    public UserController(User user, SQLite bd){
-        this.bd = bd;
+    public UserController(User user){
+        this.bd = new SQLite();
         this.view = new UserView(user);
         this.user = user;
         initListeners();
@@ -34,9 +34,10 @@ public class UserController {
         view.getInitButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                bd.close();
                 view.dispose();
                 javax.swing.SwingUtilities.invokeLater(() -> {
-                    simulation = new SimulationController(user, bd);
+                    simulation = new SimulationController(user);
                 });
             }
         });
@@ -44,9 +45,10 @@ public class UserController {
         view.getResultButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                bd.close();
                 view.dispose();
                 javax.swing.SwingUtilities.invokeLater(() -> {
-                    result = new ResultController(user, bd);
+                    result = new ResultController(user);
                 });
             }
         });
@@ -65,6 +67,7 @@ public class UserController {
                 if (confirm == JOptionPane.YES_OPTION) {
                     bd.deleteUserByUsername(user.getUserName());
                     JOptionPane.showMessageDialog(view, "Conta deletada com sucesso.");
+                    bd.close();
                     view.dispose();
                     javax.swing.SwingUtilities.invokeLater(() -> {
                         LoginController login = new LoginController();
@@ -76,11 +79,14 @@ public class UserController {
         view.getQuitButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                bd.close();
                 view.dispose();
                 javax.swing.SwingUtilities.invokeLater(() -> {
                     LoginController login = new LoginController();
                 });
             }
         });
+
+
     }
 }

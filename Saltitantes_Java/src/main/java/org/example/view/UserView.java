@@ -1,6 +1,6 @@
 package org.example.view;
 
-import org.example.controller.LoginController;
+import org.example.model.SQLite;
 import org.example.model.User;
 
 import javax.swing.*;
@@ -35,7 +35,6 @@ public class UserView extends JFrame {
         this.getContentPane().setBackground(new Color(0,0,0));
 
         initComponents();
-
         setVisible(true);
     }
 

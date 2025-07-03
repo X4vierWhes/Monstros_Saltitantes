@@ -15,6 +15,7 @@ public class User {
     private boolean isAdm = false;
     private static int index = 0;
     private double points = 0;
+    private double totalPoints = 0;
 
     public User(String username, String password, String avatarName){
         this.USERNAME = username;
@@ -88,5 +89,9 @@ public class User {
 
     public double getPoints() {
         return points;
+    }
+
+    public void setPoints(double points){
+        this.points = points;
     }
 }
