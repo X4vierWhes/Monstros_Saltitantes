@@ -138,7 +138,7 @@ public class LoginView extends JFrame {
     /**
      * @return Botão para realizar cadastro (sign-in).
      */
-    public JButton getSignInButtonButton() {
+    public JButton getSignInButton() {
         return signInButton;
     }
 

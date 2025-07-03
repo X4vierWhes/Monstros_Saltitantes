@@ -103,16 +103,9 @@ public class CreaturesPanelTest {
      * Verifica que o painel não pode ser atualizado se alguma bola ainda estiver em movimento.
      */
     @Test
-    void failureIsCanUpdate() {
+    void IsCanUpdate() {
         panel.getLast().canMove = true;
         assertFalse(panel.isCanUpdate(), "Não deve atualizar enquanto há bolas em movimento");
-    }
-
-    /**
-     * Verifica que o painel pode ser atualizado se nenhuma bola estiver em movimento.
-     */
-    @Test
-    void succededIsCanUpdate() {
         panel.getLast().canMove = false;
         assertTrue(panel.isCanUpdate(), "Deve atualizar quando não há bolas em movimento");
     }
@@ -153,6 +146,8 @@ public class CreaturesPanelTest {
         panel.removeCreature(panel.getLast());
         assertNotNull(panel.getLast(),
                 "getLast() não deve retornar null pois removeCreature não remove a última bola");
+        panel.Creatures.clear();
+        assertNull(panel.getLast(), "getLast deve retornar null se a lista estiver vazia");
     }
 
     /**
@@ -203,28 +198,47 @@ public class CreaturesPanelTest {
      * Verifica que o método update() retorna verdadeiro quando há bolas com dinheiro.
      */
     @Test
-    void succededUpdate() {
+    void update() {
         assertTrue(panel.update(),
                 "O método update() deve prosseguir com bolas válidas");
+        panel.Creatures.clear();
+        assertFalse(panel.update(), "Update não deve funcionar com lista vazia");
     }
 
     /**
      * Verifica que a atualização física ainda ocorre mesmo com uma única bola.
      */
     @Test
-    void PhisycsUpdate() {
-        panel.removeCreature(panel.getLast());
+    void phisycsUpdate() {
+        // Deve retornar true com pelo menos uma criatura
         assertTrue(panel.phisycsUpdate(),
-                "A atualização física deveria continuar com uma bola restante");
-        panel.Creatures.remove(panel.Creatures.getLast());
-        assertFalse(panel.phisycsUpdate(), "Atualização fisica nao deve ocorrer com lista vazia");
+                "A atualização física deveria funcionar com uma bola");
 
-        panel.removeCreature(panel.getLast());
+        // Remove todas as criaturas
+        panel.Creatures.clear();
+        assertFalse(panel.phisycsUpdate(), "Atualização física não deve ocorrer com lista vazia");
+
+        // Reinicializa com uma nova criatura
+        panel.Creatures.clear();
         panel.addCreature(80);
-        panel.initSimulation(0);
-        assertTrue(panel.phisycsUpdate(),
-                "A atualização física deve ocorrer normalmente com bolas no painel");
+        Creature c = panel.getLast();
+        c.canMove = true;
+        c.target = c.x + 10;
+        panel.startSimulation = true;
+        panel.canUpdate = true;
+
+        int updates = 0;
+        int maxUpdates = 1000;
+
+        while (c.canMove && updates < maxUpdates) {
+            panel.phisycsUpdate();
+            updates++;
+        }
+
+        assertFalse(c.canMove, "A criatura deve parar de se mover ao atingir o alvo");
+        assertEquals(c.target, c.x, "A posição final deve ser igual ao alvo");
     }
+
 
     @Test
     void guardianIsLast(){
@@ -249,6 +263,13 @@ public class CreaturesPanelTest {
         panel.checkCluster();
         panel.checkGuardian();
         assertTrue(panel.getLast().isGuardian, "Mesmo apos criar cluster e Guardiao os eliminar. Guardiao deve ser o ultimo");
+    }
+
+    @Test
+    void createGuardian(){
+        assertTrue(panel.createGuardian(80), "Deve poder criar guardião se ele ainda não existir");
+        assertFalse(panel.createGuardian(80), "Não deve poder criar guardião se ele ainda não existir");
+
     }
 
     @Test
@@ -288,5 +309,75 @@ public class CreaturesPanelTest {
 
         assertTrue(panel.checkGuardian(), "Se houverem clusters proximos ao Guardiao, devem ser eliminados");
 
+    }
+
+    @Test
+    void initSimulation(){
+        panel.startSimulation = false;
+        assertTrue(panel.initSimulation(80), "Simulação deveria iniciar pois esta parada");
+        assertFalse(panel.initSimulation(80), "Simulação não deveria iniciar pois ja está iniciada");
+    }
+
+    @Test
+    void stopSimulation(){
+        assertFalse(panel.stopSimulation(), "Simulação so pode ser parada se tiver começado");
+        //Simulação termina com derrota
+        panel.startSimulation = true;
+        panel.user.setPoints(400.0);
+        assertFalse(panel.stopSimulation(), "Pontos abaixo do objetivo resultam em derrota");
+        panel.startSimulation = true;
+        panel.user.setPoints(600.0);
+        assertTrue(panel.stopSimulation(), "Pontos acima do objetivo resultam em vitoria");
+    }
+
+    @Test
+    void checkEndConditionVictory() {
+        for(Creature c: panel.Creatures){
+            c.gold = 10;
+        }
+        panel.startSimulation = true;
+        panel.createGuardian(80);
+        panel.getLast().gold = 1000;
+        panel.user.setPoints(1000.0);
+
+        assertTrue(panel.checkEndCondition(), "Simulação deve terminar com vitória");
+
+        for(Creature c: panel.Creatures){
+            c.gold = 100;
+        }
+        panel.startSimulation = true;
+        panel.createGuardian(80);
+        panel.getLast().gold = 1000;
+        panel.user.setPoints(400.0);
+
+        assertFalse(panel.checkEndCondition(), "Simulação deve terminar com derrota");
+    }
+
+    @Test
+    void thiefNeighborWhenCantUpdate() {
+        panel.addCreature(100);
+        panel.getLast().canMove = true;
+        assertFalse(panel.thiefNeighbor(panel.getLast()), "Não pode roubar se canUpdate é falso");
+    }
+
+    @Test
+    void createGuardianFailsIfExists() {
+        panel.initSimulation(80);
+        assertFalse(panel.createGuardian(100), "Não deve permitir mais de um guardião");
+    }
+
+    @Test
+    void checkClusterWithoutValidGroup() {
+        panel.addCreature(0);
+        panel.addCreature(200); // bem longe
+        assertFalse(panel.checkCluster(), "Sem grupos próximos, não deve formar cluster");
+    }
+
+    @Test
+    void stopSimulationWithNullTimers() {
+        panel.startSimulation = true;
+        panel.updateTimer = null;
+        panel.phisycsTimer = null;
+        assertFalse(panel.stopSimulation(), "Parar simulação mesmo sem timers ativos");
     }
 }

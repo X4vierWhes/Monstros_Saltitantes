@@ -28,7 +28,7 @@ public class SQLite {
             "avatar TEXT, " +
             "simulations INTEGER, " +
             "success INTEGER," +
-            "totalPoints DOUBLE)";
+            "totalpoints DOUBLE)";
 
     /** Conexão ativa com o banco de dados. */
     private Connection connection;
@@ -168,8 +168,8 @@ public class SQLite {
             edit.setString(2, editedUser.getAvatarname());
             edit.setInt(3, editedUser.getSIMULATIONS());
             edit.setInt(4, editedUser.getSUCCESS_SIMULATIONS());
-            edit.setString(5, username);
-            edit.setDouble(6, editedUser.getTotalPoints());
+            edit.setDouble(5, editedUser.getTotalPoints());
+            edit.setString(6, username);
             edit.executeUpdate();
             return true;
         } catch (SQLException e) {

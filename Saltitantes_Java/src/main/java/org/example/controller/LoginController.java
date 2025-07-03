@@ -35,6 +35,16 @@ public class LoginController {
         initListeners();
     }
 
+    public LoginController(LoginView view, SQLite bd) {
+        this.view = view;
+        this.bd = bd;
+        //initListeners();
+    }
+
+    public void initialize() {
+        initListeners();
+    }
+
     /**
      * Inicializa os ouvintes de eventos para os botões de login e criação de conta.
      */
@@ -46,7 +56,7 @@ public class LoginController {
             }
         });
 
-        view.getSignInButtonButton().addActionListener(new ActionListener() {
+        view.getSignInButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 signIn();
@@ -59,7 +69,7 @@ public class LoginController {
      * Caso o nome de usuário já exista, exibe uma mensagem de erro.
      * Caso contrário, insere o novo usuário no banco e exibe confirmação.
      */
-    private boolean signIn() {
+    public boolean signIn() {
         String userName = view.getUsernameField().getText();
         String passWord = new String(view.getPasswordField().getPassword());
         User newUser = new User(userName, passWord, "common");
@@ -69,7 +79,7 @@ public class LoginController {
             view.getStatusLabel().setText("Campo de username ou password em branco");
             return false;
         }else if (bd.insertIntoUsers(newUser)) {
-            view.getStatusLabel().setForeground(new Color(0, 128, 0));
+            view.getStatusLabel().setForeground(new Color(0, 255, 0));
             view.getStatusLabel().setText("Conta criada com sucesso!");
             return true;
         } else {
@@ -98,7 +108,7 @@ public class LoginController {
             view.getStatusLabel().setForeground(new Color(0, 128, 0));
             view.getStatusLabel().setText("Login realizado com sucesso!");
 
-            JOptionPane.showMessageDialog(view, "Bem-vindo, " + userName + "!");
+            //JOptionPane.showMessageDialog(view, "Bem-vindo, " + userName + "!");
             bd.close();
             view.dispose();
             javax.swing.SwingUtilities.invokeLater(() -> {

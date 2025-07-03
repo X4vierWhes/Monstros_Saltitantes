@@ -32,10 +32,10 @@ public class CreaturesPanel extends JPanel {
     public final List<Creature> Creatures = new ArrayList<>();
 
     /** Timer que controla a física das bolas (gravidade, movimento). */
-    private Timer phisycsTimer;
+    public Timer phisycsTimer;
 
     /** Timer que dispara atualizações periódicas nas bolas (roubo e movimentação). */
-    private Timer updateTimer;
+    public Timer updateTimer;
 
     /** Valor da gravidade aplicada às bolas. */
     private final float grav = 1.0f;
@@ -52,14 +52,14 @@ public class CreaturesPanel extends JPanel {
     private int interacao = 0;
 
     /** Flag que alterna o momento de atualizar ou não. */
-    private boolean canUpdate = true;
+    public boolean canUpdate = true;
 
-    private boolean startSimulation = false;
+    public boolean startSimulation = false;
 
     /** Índice atual da bola que está se movendo. */
-    private static int moveIndex = 0;
-   private User user;
-   public SQLite bd;
+    public static int moveIndex = 0;
+    public User user;
+    public SQLite bd;
     /**
      * Construtor do painel de bolas.
      *
@@ -227,6 +227,8 @@ public class CreaturesPanel extends JPanel {
 
                 thief.target = calcNextPosition(thief);
                 Creatures.get(closerIndex).target = calcNextPosition(Creatures.get(closerIndex));
+            }else{
+                return false;
             }
             return true;
         }
@@ -482,7 +484,7 @@ public class CreaturesPanel extends JPanel {
         }
     }
 
-    public void initSimulation(int randomX) {
+    public boolean initSimulation(int randomX) {
         synchronized (Creatures){
             if(!startSimulation) {
                 startSimulation = true;
@@ -491,14 +493,24 @@ public class CreaturesPanel extends JPanel {
                 bd.editUserByUsername(user.getUserName(), user);
                 createGuardian(randomX);
                 startUpdateTimer();
+                return true;
             }
+            return false;
         }
     }
 
     public boolean stopSimulation(){
-        startSimulation = false;
-        updateTimer.stop();
-        phisycsTimer.stop();
+        if(!startSimulation){
+            System.err.println("Simulação ainda nao começou");
+            return false;
+        } //Se simulação nao começou, nao tem como parar
+
+        startSimulation = false; //Para simulação que começou
+        //Para os timers
+        if((updateTimer != null && phisycsTimer != null) && (updateTimer.isRunning() && phisycsTimer.isRunning())) {
+            updateTimer.stop();
+            phisycsTimer.stop();
+        }
 
         System.err.println(user.getSIMULATIONS() + " / " + user.getPoints() + " / " + user.getSUCCESS_SIMULATIONS());
         boolean ret;
@@ -567,7 +579,7 @@ public class CreaturesPanel extends JPanel {
         phisycsTimer.start();
     }
 
-    private boolean checkEndCondition() {
+    public boolean checkEndCondition() {
         synchronized (Creatures) {
             if (!startSimulation) return false;
 
