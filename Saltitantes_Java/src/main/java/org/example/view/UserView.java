@@ -15,7 +15,9 @@ public class UserView extends JFrame {
     private static final int btnWIDTH = 150;
     private static final int btnHEIGHT = 70;
     private User user;
-    private final Vector<String> imgs = new Vector<>(java.util.Arrays.asList("common", "diamond", "dog", "dogs", "lego", "snopanime"));
+    private final Vector<String> imgs = new Vector<>(java.util.Arrays.asList(
+            "common", "diamond", "dog", "dogs", "lego", "snopanime",
+            "cat", "cat2", "cience", "humor", "jr", "mine", "neymar", "pray", "west"));
     private JPanel avatarPanel;
     private ImageIcon imageIcon;
     private JButton initButton;
