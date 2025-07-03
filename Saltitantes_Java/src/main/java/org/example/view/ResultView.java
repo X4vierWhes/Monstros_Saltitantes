@@ -7,35 +7,72 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * Janela gráfica responsável por exibir os resultados do usuário após uma simulação.
+ *
+ * <p>A `ResultView` apresenta o avatar do usuário, informações estatísticas como número
+ * de simulações, vitórias e taxa de sucesso, além de um ranking de todos os usuários do sistema.</p>
+ *
+ * <p>A interface é personalizada com cores e layout manual, utilizando {@link JFrame}
+ * como container principal.</p>
+ *
+ * @author ValentinaClash
+ * @version 1.0
+ * @see User
+ * @see SQLite
+ */
 public class ResultView extends JFrame {
-    /** Largura da janela. */
+
+    /** Largura padrão da janela. */
     private static final int WIDTH = 720;
 
-    /** Altura da janela. */
+    /** Altura padrão da janela. */
     private static final int HEIGHT = 480;
 
-    private static final Color color = new Color(255,0, 129);
+    /** Cor de destaque usada na interface. */
+    private static final Color color = new Color(255, 0, 129);
+
+    /** Usuário atualmente logado. */
     private User user;
+
+    /** Avatar do usuário em forma de imagem. */
     private ImageIcon imageIcon;
+
+    /** Painel onde o avatar será exibido. */
     private JPanel avatarPanel;
+
+    /** Botão utilizado para sair da tela de resultados. */
     private JButton quitButton;
+
+    /** Conexão com o banco de dados SQLite. */
     private SQLite bd;
 
-    public ResultView(User user, SQLite bd){
+    /**
+     * Construtor da tela de resultados.
+     *
+     * @param user Usuário autenticado.
+     * @param bd   Instância de conexão com banco de dados SQLite.
+     */
+    public ResultView(User user, SQLite bd) {
         this.user = user;
         this.bd = bd;
+
         this.setTitle("Tela de Resultados");
         this.setSize(WIDTH, HEIGHT);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(null);
-        this.getContentPane().setBackground(new Color(0,0,0)); //cor background da tela
+        this.getContentPane().setBackground(Color.BLACK);
 
         initComponents();
 
         setVisible(true);
     }
 
+    /**
+     * Inicializa e posiciona os componentes gráficos da tela de resultados.
+     * Exibe avatar, informações do usuário e ranking geral de usuários.
+     */
     private void initComponents() {
         imageIcon = user.getAVATAR();
         JLabel avatarLabel = new JLabel(imageIcon);
@@ -95,22 +132,27 @@ public class ResultView extends JFrame {
                 label.setForeground(Color.WHITE);
                 label.setAlignmentX(Component.CENTER_ALIGNMENT);
                 listPanel.add(label);
-                listPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Espaçamento entre labels
+                listPanel.add(Box.createRigidArea(new Dimension(0, 5)));
             }
 
             JScrollPane scrollPane = new JScrollPane(listPanel);
-            scrollPane.setBounds(WIDTH/3, HEIGHT / 5, WIDTH / 2, 200);
+            scrollPane.setBounds(WIDTH / 3, HEIGHT / 5, WIDTH / 2, 200);
             scrollPane.setOpaque(false);
             scrollPane.getViewport().setOpaque(false);
-            scrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(color),
+            scrollPane.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(color),
                     "Ranking de Usuários", 0, 0, null, color));
-            scrollPane.getVerticalScrollBar().setUnitIncrement(16); // Scroll mais suave
+            scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
             this.add(scrollPane);
         }
     }
 
-
+    /**
+     * Retorna o botão de sair (voltar).
+     *
+     * @return botão quitButton.
+     */
     public JButton getQuitButton() {
         return quitButton;
     }

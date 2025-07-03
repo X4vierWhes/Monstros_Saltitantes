@@ -502,13 +502,6 @@ public class CreaturesPanel extends JPanel {
         user.setPoints(0.0);
         JOptionPane.showMessageDialog(this, msg);
         bd.editUserByUsername(user.getUserName(), user);
-        /*
-        javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
-        javax.swing.SwingUtilities.invokeLater(() -> {
-            UserController userController = new UserController(user, bd);
-        });
-         */
-
     }
 
     /**

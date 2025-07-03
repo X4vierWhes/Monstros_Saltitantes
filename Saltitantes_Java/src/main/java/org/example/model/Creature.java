@@ -3,57 +3,64 @@ package org.example.model;
 import javax.swing.*;
 
 /**
- * Representa uma bola no jogo, que possui posição, velocidade, dinheiro e estado de roubo.
+ * Representa uma criatura (ou bola) participante da simulação.
  *
- * <p>A classe controla a movimentação da bola e o tempo de espera (cooldown) após um roubo.
- * Ela também associa a bola a um componente gráfico {@link JLabel}.</p>
+ * <p>Cada criatura possui atributos físicos (posição, velocidade), status de ação (roubo e movimento),
+ * uma quantidade de ouro que pode ser transferida, e um componente gráfico {@link JLabel}
+ * usado para exibição visual no painel.</p>
+ *
+ * <p>Ela pode assumir diferentes papéis na simulação, como:</p>
+ * <ul>
+ *     <li><b>Guardião</b>: designado a absorver clusters.</li>
+ *     <li><b>Cluster</b>: fusão de múltiplas criaturas com soma de ouro.</li>
+ * </ul>
  *
  * @author ValentinaClash
  * @version 1.0
  */
 public class Creature {
 
-    /** Coordenada X da bola. */
+    /** Posição horizontal (X) da criatura na tela. */
     public int x;
 
-    /** Coordenada Y da bola. */
+    /** Posição vertical (Y) da criatura na tela. */
     int y;
 
-    /** Velocidade vertical da bola. */
+    /** Velocidade vertical da criatura (usada na simulação de pulo/gravidade). */
     int spdY = 0;
 
-    /** Velocidade horizontal da bola. */
+    /** Velocidade horizontal da criatura (usada na movimentação para o alvo). */
     int spdX = 0;
 
-    /** Dinheiro associado à bola. */
+    /** Quantidade de ouro que a criatura possui. */
     public double gold = 1000000;
 
-    /** Indica se a bola pode se mover. */
+    /** Indica se a criatura está autorizada a se mover. */
     public boolean canMove = false;
 
-    /** Indica se a bola pode realizar roubo. */
+    /** Indica se a criatura pode executar um roubo neste ciclo. */
     boolean canTheft = true;
 
-    /** Indica se é um cluster */
+    /** Indica se esta criatura representa um cluster (fusão de múltiplas criaturas). */
     boolean isCluster = false;
 
-    /** Indica se é um guardião */
+    /** Indica se esta criatura é o guardião da simulação. */
     boolean isGuardian = false;
 
-    /** Índice do alvo atual da bola (possivelmente outra bola ou jogador). */
+    /** Posição alvo da criatura na direção X (destino lógico). */
     int target = 0;
 
-    /** Rótulo visual associado à bola (usado para exibição gráfica). */
+    /** Componente visual associado à criatura para exibição na interface Swing. */
     JLabel label;
 
     /**
-     * Construtor da classe Creature.
+     * Cria uma nova instância de {@code Creature} com posição, velocidade e componente gráfico definidos.
      *
      * @param x     Posição inicial no eixo X.
      * @param y     Posição inicial no eixo Y.
      * @param spdX  Velocidade horizontal inicial.
      * @param spdY  Velocidade vertical inicial.
-     * @param label JLabel associado à representação visual da bola.
+     * @param label JLabel associado à representação gráfica da criatura.
      */
     public Creature(int x, int y, int spdX, int spdY, JLabel label) {
         this.x = x;
