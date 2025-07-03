@@ -29,7 +29,7 @@ public class CreaturesPanel extends JPanel {
     private final int groundY;
 
     /** Lista de todas as bolas presentes no painel. */
-    private final List<Creature> Creatures = new ArrayList<>();
+    public final List<Creature> Creatures = new ArrayList<>();
 
     /** Timer que controla a física das bolas (gravidade, movimento). */
     private Timer phisycsTimer;
@@ -59,7 +59,7 @@ public class CreaturesPanel extends JPanel {
     /** Índice atual da bola que está se movendo. */
     private static int moveIndex = 0;
    private User user;
-   private SQLite bd;
+   public SQLite bd;
     /**
      * Construtor do painel de bolas.
      *
@@ -119,10 +119,10 @@ public class CreaturesPanel extends JPanel {
         }
     }
 
-    private void createCluster(ArrayList<Creature> creaturesColliding){
+    public boolean createCluster(ArrayList<Creature> creaturesColliding){
         if(creaturesColliding.size() > 1){
             synchronized (Creatures) {
-                if(!getLast().isGuardian) return;
+                if(!getLast().isGuardian) return false;
                 Creature guardian = getLast();
                 removeCreature(guardian); //Remove temporiarmente o guardião da lista
 
@@ -149,15 +149,17 @@ public class CreaturesPanel extends JPanel {
                 cluster.canMove = true;
                 setLabelText(cluster);
                 Creatures.add(guardian);
+                return true;
             }
         }
+        return false;
     }
 
-    private void createGuardian(int posX){
+    public boolean createGuardian(int posX){
         synchronized (Creatures){
             if(this.getLast().isGuardian){
                 System.err.println("Só pode ter um guardião");
-                return;
+                return false;
             }
             int spdX = 1;
             int spdY = 1;
@@ -171,6 +173,7 @@ public class CreaturesPanel extends JPanel {
             Creatures.add(guardian);
             guardian.x = calcNextPosition(Creatures.getLast());
             guardian.target = Creatures.getLast().x;
+            return true;
         }
     }
 
@@ -354,7 +357,7 @@ public class CreaturesPanel extends JPanel {
         }
     }
 
-    private void checkGuardian() {
+    public boolean checkGuardian() {
         synchronized (Creatures) {
             Creature guardian = getLast();
 
@@ -377,15 +380,19 @@ public class CreaturesPanel extends JPanel {
                     setLabelText(guardian);
                     guardian.target = calcNextPosition(guardian);
                     guardian.canMove = true;
+                    return true;
+                }else{
+                    return false;
                 }
             }
+            return false;
         }
     }
 
     /**
      * Checa se precisa criar novos clusters (duas ou mais criaturas na mesma posição
      */
-    private void checkCluster() {
+    public boolean checkCluster() {
         synchronized (Creatures) {
             List<Creature> left = new ArrayList<>(Creatures); // cópia para controle
             List<List<Creature>> group = new ArrayList<>();
@@ -409,6 +416,8 @@ public class CreaturesPanel extends JPanel {
 
                 if (grupo.size() > 1) {
                     group.add(grupo);
+                }else{
+                    return false;
                 }
             }
 
@@ -416,6 +425,7 @@ public class CreaturesPanel extends JPanel {
                 createCluster(new ArrayList<>(grupo));
             }
         }
+        return true;
     }
 
     /**
@@ -484,24 +494,27 @@ public class CreaturesPanel extends JPanel {
         }
     }
 
-    public void stopSimulation(){
+    public boolean stopSimulation(){
         startSimulation = false;
         updateTimer.stop();
         phisycsTimer.stop();
 
         System.err.println(user.getSIMULATIONS() + " / " + user.getPoints() + " / " + user.getSUCCESS_SIMULATIONS());
-
+        boolean ret;
         String msg;
         if(user.getPoints() >= 500){
             user.addSuccesSimulations();
             msg = "Objetivo: 500 pontos | Resultado: " + user.getPoints() + " | == Vitoria";
+            ret = true;
         }else{
             msg = "Objetivo: 500 pontos | Resultado: " + user.getPoints() + " | == Derrota";
+            ret = false;
         }
         System.err.println(user.getSIMULATIONS() + " / " + user.getPoints() + " / " + user.getSUCCESS_SIMULATIONS());
         user.setPoints(0.0);
         JOptionPane.showMessageDialog(this, msg);
         bd.editUserByUsername(user.getUserName(), user);
+        return ret;
     }
 
     /**
@@ -553,9 +566,9 @@ public class CreaturesPanel extends JPanel {
         phisycsTimer.start();
     }
 
-    private void checkEndCondition() {
+    private boolean checkEndCondition() {
         synchronized (Creatures) {
-            if (!startSimulation) return;
+            if (!startSimulation) return false;
 
             int normalCount = 0;
             Creature normalCreature = null;
@@ -570,11 +583,12 @@ public class CreaturesPanel extends JPanel {
                 }
             }
 
-            if (normalCount == 1 && guardian != null /*&& guardian.gold > normalCreature.gold*/) {
+            if (normalCount == 1 && guardian != null && guardian.gold > normalCreature.gold) {
                 JOptionPane.showMessageDialog(this, "FIM DA SIMULAÇÃO!");
-                stopSimulation();
+                return stopSimulation();
             }
         }
+        return false;
     }
 
 

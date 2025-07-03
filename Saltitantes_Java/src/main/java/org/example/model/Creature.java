@@ -39,19 +39,19 @@ public class Creature {
     public boolean canMove = false;
 
     /** Indica se a criatura pode executar um roubo neste ciclo. */
-    boolean canTheft = true;
+    public boolean canTheft = true;
 
     /** Indica se esta criatura representa um cluster (fusão de múltiplas criaturas). */
-    boolean isCluster = false;
+    public boolean isCluster = false;
 
     /** Indica se esta criatura é o guardião da simulação. */
-    boolean isGuardian = false;
+    public boolean isGuardian = false;
 
     /** Posição alvo da criatura na direção X (destino lógico). */
-    int target = 0;
+    public int target = 0;
 
     /** Componente visual associado à criatura para exibição na interface Swing. */
-    JLabel label;
+    public JLabel label;
 
     /**
      * Cria uma nova instância de {@code Creature} com posição, velocidade e componente gráfico definidos.
