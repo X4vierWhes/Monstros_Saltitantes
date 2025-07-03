@@ -70,6 +70,7 @@ public class SimulationController {
         view.getBtnQuit().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                bd.editUserByUsername(user.getUserName(), user);
                 bd.close();
                 view.dispose();
                 javax.swing.SwingUtilities.invokeLater(() -> {

@@ -380,6 +380,7 @@ public class CreaturesPanel extends JPanel {
                     setLabelText(guardian);
                     guardian.target = calcNextPosition(guardian);
                     guardian.canMove = true;
+                    guardian.canTheft = false;
                     return true;
                 }else{
                     return false;

@@ -27,7 +27,8 @@ public class SQLite {
             "password TEXT NOT NULL, " +
             "avatar TEXT, " +
             "simulations INTEGER, " +
-            "success INTEGER)";
+            "success INTEGER," +
+            "totalPoints DOUBLE)";
 
     /** Conexão ativa com o banco de dados. */
     private Connection connection;
@@ -54,13 +55,14 @@ public class SQLite {
     public boolean insertIntoUsers(User user) {
         try {
             PreparedStatement insert = connection.prepareStatement(
-                    "INSERT INTO users(username, password, avatar, simulations, success) VALUES(?,?,?,?,?)");
+                    "INSERT INTO users(username, password, avatar, simulations, success, totalpoints) VALUES(?,?,?,?,?, ?)");
 
             insert.setString(1, user.getUserName());
             insert.setString(2, user.getPassWord());
             insert.setString(3, user.getAvatarname());
             insert.setInt(4, user.getSIMULATIONS());
             insert.setInt(5, user.getSUCCESS_SIMULATIONS());
+            insert.setDouble(6, user.getTotalPoints());
             insert.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -109,7 +111,8 @@ public class SQLite {
                         resultSet.getString("password"),
                         resultSet.getString("avatar"),
                         resultSet.getInt("simulations"),
-                        resultSet.getInt("success"));
+                        resultSet.getInt("success"),
+                        resultSet.getDouble("totalpoints"));
             }
 
         } catch (SQLException e) {
@@ -136,7 +139,8 @@ public class SQLite {
                         resultSet.getString("password"),
                         resultSet.getString("avatar"),
                         resultSet.getInt("simulations"),
-                        resultSet.getInt("success")
+                        resultSet.getInt("success"),
+                        resultSet.getDouble("totalpoints")
                 );
                 aux.add(user);
             }
@@ -159,12 +163,13 @@ public class SQLite {
     public boolean editUserByUsername(String username, User editedUser) {
         try {
             PreparedStatement edit = connection.prepareStatement(
-                    "UPDATE users SET password = ?, avatar = ?, simulations = ?, success = ? WHERE username = ?");
+                    "UPDATE users SET password = ?, avatar = ?, simulations = ?, success = ?, totalpoints = ? WHERE username = ?");
             edit.setString(1, editedUser.getPassWord());
             edit.setString(2, editedUser.getAvatarname());
             edit.setInt(3, editedUser.getSIMULATIONS());
             edit.setInt(4, editedUser.getSUCCESS_SIMULATIONS());
             edit.setString(5, username);
+            edit.setDouble(6, editedUser.getTotalPoints());
             edit.executeUpdate();
             return true;
         } catch (SQLException e) {

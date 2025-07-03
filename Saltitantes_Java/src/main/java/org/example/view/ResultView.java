@@ -127,7 +127,8 @@ public class ResultView extends JFrame {
                         u.getUserName() +
                                 " | Sims: " + u.getSIMULATIONS() +
                                 " | Sucesso: " + u.getSUCCESS_SIMULATIONS() +
-                                " | Rating: " + u.getSuccesRate()
+                                " | Rating: " + u.getSuccesRate() +
+                                " | Pontos: " + u.getTotalPoints()
                 );
                 label.setForeground(Color.WHITE);
                 label.setAlignmentX(Component.CENTER_ALIGNMENT);

@@ -59,21 +59,28 @@ public class LoginController {
      * Caso o nome de usuário já exista, exibe uma mensagem de erro.
      * Caso contrário, insere o novo usuário no banco e exibe confirmação.
      */
-    private void signIn() {
+    private boolean signIn() {
         String userName = view.getUsernameField().getText();
         String passWord = new String(view.getPasswordField().getPassword());
         User newUser = new User(userName, passWord, "common");
 
-        if (bd.insertIntoUsers(newUser)) {
+        if(userName.isEmpty() || passWord.isEmpty()){
+            view.getStatusLabel().setForeground(Color.red);
+            view.getStatusLabel().setText("Campo de username ou password em branco");
+            return false;
+        }else if (bd.insertIntoUsers(newUser)) {
             view.getStatusLabel().setForeground(new Color(0, 128, 0));
             view.getStatusLabel().setText("Conta criada com sucesso!");
+            return true;
         } else {
             User user = bd.findUserByUsername(userName);
             if (user != null && user.getUserName().equals(userName)) {
                 view.getStatusLabel().setForeground(Color.RED);
                 view.getStatusLabel().setText("Nome de usuário ocupado!");
+                return false;
             }
         }
+        return false;
     }
 
     /**
@@ -82,7 +89,7 @@ public class LoginController {
      * e inicia o controlador do usuário correspondente.
      * Caso contrário, exibe mensagem de erro.
      */
-    private void login() {
+    private boolean login() {
         String userName = view.getUsernameField().getText();
         String passWord = new String(view.getPasswordField().getPassword());
         User log = bd.findUserByUsername(userName);
@@ -97,9 +104,11 @@ public class LoginController {
             javax.swing.SwingUtilities.invokeLater(() -> {
                 user = new UserController(log);
             });
+            return true;
         } else {
             view.getStatusLabel().setForeground(Color.RED);
             view.getStatusLabel().setText("Usuário ou password inválidos.");
+            return false;
         }
     }
 }

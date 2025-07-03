@@ -74,12 +74,13 @@ public class User {
      * @param simulations         Número de simulações realizadas.
      * @param success_simulations Número de simulações bem-sucedidas.
      */
-    public User(String username, String password, String avatarName, int simulations, int success_simulations) {
+    public User(String username, String password, String avatarName, int simulations, int success_simulations, double totalPoints) {
         this.USERNAME = username;
         this.PASSWORD = password;
         this.setAvatar(avatarName);
         this.SIMULATIONS = simulations;
         this.SUCCESS_SIMULATIONS = success_simulations;
+        this.totalPoints = totalPoints;
     }
 
     /** Incrementa o número de simulações realizadas. */
@@ -191,6 +192,13 @@ public class User {
      * @param points Novo valor da pontuação.
      */
     public void setPoints(double points) {
+        this.totalPoints += this.points;
         this.points = points;
+    }
+
+    public double getTotalPoints(){return this.totalPoints;}
+
+    public void setTotalPoints(double t){
+        this.totalPoints = t;
     }
 }

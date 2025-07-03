@@ -8,7 +8,6 @@ import org.example.controller.SimulationController;
  */
 public class Main {
 
-    public static SimulationController simulation;
     public static LoginController login;
 
     public static void main(String[] args) {
