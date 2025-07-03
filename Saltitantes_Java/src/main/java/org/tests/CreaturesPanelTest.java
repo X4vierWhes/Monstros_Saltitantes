@@ -31,13 +31,6 @@ import static org.junit.jupiter.api.Assertions.*;
  *     <li><b>REQ-09:</b> Atualização física e lógica separadas e consistentes</li>
  * </ul>
  *
- * <p><b>Critérios de Qualidade:</b></p>
- * <ul>
- *     <li>Cobertura total de decisões (MC/DC) com JUnit 5</li>
- *     <li>Isolamento de testes com {@code @BeforeEach} e {@code @AfterEach}</li>
- *     <li>Evita efeitos colaterais entre testes</li>
- * </ul>
- *
  * <p><b>Invariantes:</b></p>
  * <ul>
  *     <li>Guardião só existe após o início da simulação</li>
@@ -239,7 +232,9 @@ public class CreaturesPanelTest {
         assertEquals(c.target, c.x, "A posição final deve ser igual ao alvo");
     }
 
-
+    /**
+     * Verifica se o guardião sempre é a última criatura da lista após eventos como simulação, adição e fusão.
+     */
     @Test
     void guardianIsLast(){
         assertFalse(panel.getLast().isGuardian, "Guardião so deve aparecer ao iniciar simulação");
@@ -265,6 +260,9 @@ public class CreaturesPanelTest {
         assertTrue(panel.getLast().isGuardian, "Mesmo apos criar cluster e Guardiao os eliminar. Guardiao deve ser o ultimo");
     }
 
+    /**
+     * Verifica condições de criação de guardião.
+     * */
     @Test
     void createGuardian(){
         assertTrue(panel.createGuardian(80), "Deve poder criar guardião se ele ainda não existir");
@@ -272,6 +270,9 @@ public class CreaturesPanelTest {
 
     }
 
+    /**
+     * Verifica condições de criação do cluster
+     * */
     @Test
     void createCluster(){
         panel.initSimulation(80);
@@ -288,6 +289,9 @@ public class CreaturesPanelTest {
         assertTrue(panel.createCluster(creatures), "Deve criar um cluster com uma lista com mais de uma criatura");
     }
 
+    /**
+     * Verifica condições em que Guardião elimina um cluster
+     * */
     @Test
     void checkGuardian(){
         assertFalse(panel.checkGuardian(), "Se guardião nao estiver na lista ou simulação não estiver ativa. nao deve retornar true");
@@ -311,6 +315,9 @@ public class CreaturesPanelTest {
 
     }
 
+    /**
+     * Testa condições de inicio da simulação
+     * */
     @Test
     void initSimulation(){
         panel.startSimulation = false;
@@ -318,6 +325,9 @@ public class CreaturesPanelTest {
         assertFalse(panel.initSimulation(80), "Simulação não deveria iniciar pois ja está iniciada");
     }
 
+    /**
+     * Testa condições de fim da simulação
+     * */
     @Test
     void stopSimulation(){
         assertFalse(panel.stopSimulation(), "Simulação so pode ser parada se tiver começado");
@@ -330,6 +340,9 @@ public class CreaturesPanelTest {
         assertTrue(panel.stopSimulation(), "Pontos acima do objetivo resultam em vitoria");
     }
 
+    /**
+     * Verifica condições de fim da simulação por condição de vitoria
+     * */
     @Test
     void checkEndConditionVictory() {
         for(Creature c: panel.Creatures){
@@ -353,6 +366,9 @@ public class CreaturesPanelTest {
         assertFalse(panel.checkEndCondition(), "Simulação deve terminar com derrota");
     }
 
+    /**
+     * Verifica que o roubo não ocorre se a atualização estiver desativada.
+     */
     @Test
     void thiefNeighborWhenCantUpdate() {
         panel.addCreature(100);
@@ -360,19 +376,28 @@ public class CreaturesPanelTest {
         assertFalse(panel.thiefNeighbor(panel.getLast()), "Não pode roubar se canUpdate é falso");
     }
 
+    /**
+     * Garante que não seja possível criar mais de um guardião.
+     */
     @Test
     void createGuardianFailsIfExists() {
         panel.initSimulation(80);
         assertFalse(panel.createGuardian(100), "Não deve permitir mais de um guardião");
     }
 
+    /**
+     * Verifica que clusters não são criados quando não há criaturas próximas o suficiente.
+     */
     @Test
     void checkClusterWithoutValidGroup() {
         panel.addCreature(0);
-        panel.addCreature(200); // bem longe
+        panel.addCreature(200);
         assertFalse(panel.checkCluster(), "Sem grupos próximos, não deve formar cluster");
     }
 
+    /**
+     * Verifica que a simulação pode ser encerrada mesmo se os timers forem nulos.
+     */
     @Test
     void stopSimulationWithNullTimers() {
         panel.startSimulation = true;
