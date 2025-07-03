@@ -13,15 +13,48 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Classe de testes unitários para a classe {@link CreaturesPanel}.
- * <p>
- * Verifica o comportamento dos métodos relacionados ao movimento,
- * roubo, adição, remoção, normalização e atualização de bolas.
- * Utiliza JUnit 5 como framework de testes.
- * </p>
  *
- * @author ValentinaClash
- * @version 1.0
+ * <p>Essa classe testa o comportamento funcional da simulação gráfica de criaturas.
+ * Os testes validam as regras de movimentação, física, roubo de moedas, criação de clusters,
+ * atuação do guardião do horizonte e atualização do sistema ao longo do tempo.</p>
+ *
+ * <p><b>Requisitos cobertos:</b></p>
+ * <ul>
+ *     <li><b>REQ-01:</b> Adicionar criaturas ao painel</li>
+ *     <li><b>REQ-02:</b> Remover criaturas do painel (com restrições)</li>
+ *     <li><b>REQ-03:</b> Calcular próxima posição e normalizar alvos</li>
+ *     <li><b>REQ-04:</b> Verificar se o sistema pode ser atualizado</li>
+ *     <li><b>REQ-05:</b> Simular roubo entre criaturas vizinhas</li>
+ *     <li><b>REQ-06:</b> Detectar e criar clusters de criaturas</li>
+ *     <li><b>REQ-07:</b> Guardião eliminar clusters próximos</li>
+ *     <li><b>REQ-08:</b> Guardião sempre deve ser a última criatura</li>
+ *     <li><b>REQ-09:</b> Atualização física e lógica separadas e consistentes</li>
+ * </ul>
+ *
+ * <p><b>Critérios de Qualidade:</b></p>
+ * <ul>
+ *     <li>Cobertura total de decisões (MC/DC) com JUnit 5</li>
+ *     <li>Isolamento de testes com {@code @BeforeEach} e {@code @AfterEach}</li>
+ *     <li>Evita efeitos colaterais entre testes</li>
+ * </ul>
+ *
+ * <p><b>Invariantes:</b></p>
+ * <ul>
+ *     <li>Guardião só existe após o início da simulação</li>
+ *     <li>Guardião sempre é o último da lista</li>
+ *     <li>Clusters só são formados por mais de uma criatura</li>
+ *     <li>Simulação só pode ser atualizada se nenhuma criatura estiver se movendo</li>
+ * </ul>
+ *
+ * <p><b>Autor:</b> ValentinaClash</p>
+ * <p><b>Versão:</b> 1.0</p>
+ *
+ * @see CreaturesPanel
+ * @see Creature
+ * @see Guardian
+ * @see User
  */
+
 public class CreaturesPanelTest {
 
     /** Painel a ser testado. */
