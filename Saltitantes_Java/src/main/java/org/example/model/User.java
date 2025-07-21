@@ -130,20 +130,6 @@ public class User {
         return (float) this.SUCCESS_SIMULATIONS / this.SIMULATIONS;
     }
 
-    /** @return {@code true} se o usuário for administrador. */
-    public boolean isAdm() {
-        return isAdm;
-    }
-
-    /**
-     * Define se o usuário é administrador.
-     *
-     * @param adm {@code true} para tornar administrador.
-     */
-    public void setAdm(boolean adm) {
-        isAdm = adm;
-    }
-
     /** @return Nome do avatar associado ao usuário. */
     public String getAvatarname() {
         return AVATAR_NAME;
@@ -197,8 +183,4 @@ public class User {
     }
 
     public double getTotalPoints(){return this.totalPoints;}
-
-    public void setTotalPoints(double t){
-        this.totalPoints = t;
-    }
 }

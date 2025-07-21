@@ -184,8 +184,8 @@ public class CreaturesPanel extends JPanel {
      */
     public boolean isCanUpdate() {
         synchronized (Creatures) {
-            for (Creature Creature : Creatures) {
-                if (Creature.canMove) {
+            for (Creature aux : Creatures) {
+                if (aux.canMove && !aux.isGuardian) {
                     return false;
                 }
             }
@@ -252,6 +252,7 @@ public class CreaturesPanel extends JPanel {
     public boolean update() {
         synchronized (Creatures) {
             interacao++;
+            System.err.println(interacao);
             canUpdate = !canUpdate;
 
             if (Creatures.isEmpty()) {
@@ -285,7 +286,6 @@ public class CreaturesPanel extends JPanel {
 
             if (canUpdate) {
                 if(creaturesMove >= snapshot.size()){
-                    //System.err.println(creaturesMove + " / " + snapshot.size() + " / " + moveIndex);
                     checkGuardian();
                     checkCluster();
                     creaturesMove = 0;
@@ -596,7 +596,7 @@ public class CreaturesPanel extends JPanel {
                 }
             }
 
-            if (normalCount == 1 && guardian != null && guardian.gold > normalCreature.gold) {
+            if (normalCount == 1 && guardian != null || interacao >= 50 /*&& guardian.gold > normalCreature.gold*/) {
                 JOptionPane.showMessageDialog(this, "FIM DA SIMULAÇÃO!");
                 return stopSimulation();
             }
