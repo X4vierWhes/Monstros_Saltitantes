@@ -60,6 +60,8 @@ public class CreaturesPanel extends JPanel {
     public static int moveIndex = 0;
     public User user;
     public SQLite bd;
+    private int maxInteration = 50;
+
     /**
      * Construtor do painel de bolas.
      *
@@ -252,7 +254,7 @@ public class CreaturesPanel extends JPanel {
     public boolean update() {
         synchronized (Creatures) {
             interacao++;
-            System.err.println(interacao);
+            //System.err.println(interacao);
             canUpdate = !canUpdate;
 
             if (Creatures.isEmpty()) {
@@ -286,8 +288,8 @@ public class CreaturesPanel extends JPanel {
 
             if (canUpdate) {
                 if(creaturesMove >= snapshot.size()){
-                    checkGuardian();
-                    checkCluster();
+                    System.err.println(checkGuardian());
+                    System.err.println(checkCluster());
                     creaturesMove = 0;
                     moveIndex = 0;
                     snapshot = new ArrayList<>(Creatures);
@@ -596,7 +598,7 @@ public class CreaturesPanel extends JPanel {
                 }
             }
 
-            if ((normalCount == 1 && guardian != null  /*&& guardian.gold > normalCreature.gold*/) || interacao >= 50) {
+            if ((normalCount == 1 && guardian != null  /*&& guardian.gold > normalCreature.gold*/) || interacao >= maxInteration) {
                 JOptionPane.showMessageDialog(this, "FIM DA SIMULAÇÃO!");
                 return stopSimulation();
             }
