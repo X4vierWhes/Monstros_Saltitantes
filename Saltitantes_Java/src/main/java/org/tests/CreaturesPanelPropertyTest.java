@@ -1,5 +1,6 @@
 package org.tests;
 
+import org.example.model.Creature;
 import org.example.model.CreaturesPanel;
 import org.example.model.SQLite;
 import org.example.model.User;
@@ -70,6 +71,31 @@ public class CreaturesPanelPropertyTest {
         // Verifica se o último é o guardião
         return panel.getLast().isGuardian;
     }
+
+    @Property
+    boolean creaturesAlwaysWithinBounds(@ForAll("creaturePositions") List<@IntRange(min=0, max=700) Integer> positions) {
+        MockitoAnnotations.initMocks(this);
+        User user = new User("Test", "123", "avatar");
+        panel = new CreaturesPanel(width, height, user);
+
+        for(int pos : positions) {
+            panel.addCreature(pos);
+        }
+        // Simula alguns passos de física
+        for(int i=0; i<10; i++) {
+            panel.phisycsUpdate();
+        }
+
+        synchronized (panel.Creatures) {
+            for(Creature c : panel.Creatures) {
+                if (c.x < 0 || c.x > width - CreaturesPanel.CREATURE_SIZE) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 
     @Provide
     Arbitrary<List<Integer>> creaturePositions() {

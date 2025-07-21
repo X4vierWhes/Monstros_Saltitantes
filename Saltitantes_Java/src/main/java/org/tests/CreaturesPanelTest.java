@@ -75,7 +75,7 @@ public class CreaturesPanelTest {
      */
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+         MockitoAnnotations.initMocks(this);
         JFrame frame = new JFrame();
         User user = new User("Whesley", "1234", "dog");
         randi = new Random();
