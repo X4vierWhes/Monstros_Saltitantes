@@ -596,7 +596,7 @@ public class CreaturesPanel extends JPanel {
                 }
             }
 
-            if (normalCount == 1 && guardian != null || interacao >= 50 /*&& guardian.gold > normalCreature.gold*/) {
+            if ((normalCount == 1 && guardian != null  /*&& guardian.gold > normalCreature.gold*/) || interacao >= 50) {
                 JOptionPane.showMessageDialog(this, "FIM DA SIMULAÇÃO!");
                 return stopSimulation();
             }

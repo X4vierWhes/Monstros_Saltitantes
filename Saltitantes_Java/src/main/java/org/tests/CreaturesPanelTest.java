@@ -4,6 +4,8 @@ import org.example.model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -65,11 +67,15 @@ public class CreaturesPanelTest {
     /** Valor alvo calculado para teste. */
     private double target;
 
+    /** Mock do banco de dados SQLite. */
+    @Mock
+    private SQLite bd;
     /**
      * Inicializa o painel e adiciona uma bola antes de cada teste.
      */
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.initMocks(this);
         JFrame frame = new JFrame();
         User user = new User("Whesley", "1234", "dog");
         randi = new Random();
@@ -79,7 +85,7 @@ public class CreaturesPanelTest {
         int posX = randi.nextInt(width - CreaturesPanel.CREATURE_SIZE);
         panel.addCreature(posX);
         target = panel.calcTarget(panel.getLast());
-        panel.bd = new SQLite();
+        panel.bd = bd;
     }
 
     /**
@@ -405,4 +411,5 @@ public class CreaturesPanelTest {
         panel.phisycsTimer = null;
         assertFalse(panel.stopSimulation(), "Parar simulação mesmo sem timers ativos");
     }
+
 }

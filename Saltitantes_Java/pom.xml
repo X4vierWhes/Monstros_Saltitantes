@@ -38,6 +38,14 @@
             <version>3.50.2.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>net.jqwik</groupId>
+            <artifactId>jqwik-api</artifactId>
+            <version>1.9.3</version>
+            <scope>compile</scope>
+        </dependency>
+
+
     </dependencies>
 
 </project>
