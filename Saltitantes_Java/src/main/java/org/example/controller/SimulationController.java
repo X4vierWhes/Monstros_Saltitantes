@@ -72,6 +72,9 @@ public class SimulationController {
             public void actionPerformed(ActionEvent e) {
                 bd.editUserByUsername(user.getUserName(), user);
                 bd.close();
+
+                view.getCreaturesPanel().stopSimulation();
+
                 view.dispose();
                 javax.swing.SwingUtilities.invokeLater(() -> {
                     UserController userController = new UserController(user);

@@ -498,6 +498,7 @@ public class CreaturesPanel extends JPanel {
                 startUpdateTimer();
                 if (phisycsTimer == null){
                     startPhisycsTimer();
+                    System.err.println("teste");
                 }
                 return true;
             }
