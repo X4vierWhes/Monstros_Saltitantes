@@ -24,10 +24,10 @@ public class Creature {
     public int x;
 
     /** Posição vertical (Y) da criatura na tela. */
-    int y;
+    public int y;
 
     /** Velocidade vertical da criatura (usada na simulação de pulo/gravidade). */
-    int spdY = 0;
+    public int spdY = 0;
 
     /** Velocidade horizontal da criatura (usada na movimentação para o alvo). */
     int spdX = 0;

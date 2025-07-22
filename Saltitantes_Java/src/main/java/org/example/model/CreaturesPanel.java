@@ -134,6 +134,7 @@ public class CreaturesPanel extends JPanel {
                 label.setHorizontalAlignment(SwingConstants.CENTER);
 
                 Creature cluster = new Creature(creaturesColliding.getFirst().x, groundY - 20, 1, 0, label);
+                cluster.gold = 0.0;
                 cluster.isCluster = true;
 
                 for (Creature aux : creaturesColliding) {
@@ -206,7 +207,7 @@ public class CreaturesPanel extends JPanel {
 
             if (Creatures.size() <= 1) return false;
 
-            if (isCanUpdate()) {
+            if (isCanUpdate() && !thief.isGuardian) {
                 int closerIndex = 0;
                 int index = 0;
                 int closest_distance = getWidth() - CREATURE_SIZE;
@@ -495,6 +496,9 @@ public class CreaturesPanel extends JPanel {
                 bd.editUserByUsername(user.getUserName(), user);
                 createGuardian(randomX);
                 startUpdateTimer();
+                if (phisycsTimer == null){
+                    startPhisycsTimer();
+                }
                 return true;
             }
             return false;
