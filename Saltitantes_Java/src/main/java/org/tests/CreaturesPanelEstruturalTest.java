@@ -270,6 +270,8 @@ public class CreaturesPanelEstruturalTest {
         panel.createGuardian(100); // Um guardião
         panel.addCreature(150); // Outra criatura normal
         // A lista agora é: [Creature, Creature, Guardian]
+        panel.Creatures.getFirst().x = 0;
+        panel.Creatures.get(1).x = 100;
 
         // As criaturas normais estão muito distantes para formar cluster entre si
         // Mas o guardião NÃO deve ser considerado para formação de cluster normal
@@ -371,12 +373,6 @@ public class CreaturesPanelEstruturalTest {
         when(mockUser.getPoints()).thenReturn(600.0); // Simula pontos de vitória
         panel.startPhisycsTimer(); // Inicia os timers para poder pará-los
         panel.startUpdateTimer();
-
-        // Para simular a caixa de diálogo do JOptionPane, que bloqueia o teste,
-        // você pode mockar a classe JOptionPane ou, para testes estruturais,
-        // focar no comportamento lógico e verificar as chamadas de método.
-        // Como JOptionPane.showMessageDialog é uma chamada estática, mocking é complexo.
-        // Apenas verificaremos o estado e as interações com o mockUser/bd.
 
         assertTrue(panel.stopSimulation(), "stopSimulation deve retornar true para vitória.");
         assertFalse(panel.startSimulation, "startSimulation deve ser false após parar.");
