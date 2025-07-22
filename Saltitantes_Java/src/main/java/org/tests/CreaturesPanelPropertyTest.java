@@ -72,10 +72,14 @@ public class CreaturesPanelPropertyTest {
         return panel.getLast().isGuardian;
     }
 
+    /**
+     * Teste de propriedade: Criaturas devem sempre estar nos limites da tela
+     * independentemente de quantas atualizações fisicas são feitas.
+     */
     @Property
     boolean creaturesAlwaysWithinBounds(@ForAll("creaturePositions") List<@IntRange(min=0, max=700) Integer> positions) {
         MockitoAnnotations.initMocks(this);
-        User user = new User("Test", "123", "avatar");
+        User user = new User("Test", "123", "common");
         panel = new CreaturesPanel(width, height, user);
 
         for(int pos : positions) {
