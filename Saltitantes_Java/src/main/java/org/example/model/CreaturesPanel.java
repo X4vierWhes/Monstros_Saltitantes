@@ -518,7 +518,7 @@ public class CreaturesPanel extends JPanel {
             phisycsTimer.stop();
         }
 
-        System.err.println(user.getSIMULATIONS() + " / " + user.getPoints() + " / " + user.getSUCCESS_SIMULATIONS());
+        //System.err.println(user.getSIMULATIONS() + " / " + user.getPoints() + " / " + user.getSUCCESS_SIMULATIONS());
         boolean ret;
         String msg;
         if(user.getPoints() >= 500){
@@ -531,7 +531,7 @@ public class CreaturesPanel extends JPanel {
         }
         System.err.println(user.getSIMULATIONS() + " / " + user.getPoints() + " / " + user.getSUCCESS_SIMULATIONS());
         user.setPoints(0.0);
-        JOptionPane.showMessageDialog(this, msg);
+        //JOptionPane.showMessageDialog(this, msg);
         bd.editUserByUsername(user.getUserName(), user);
         return ret;
     }
