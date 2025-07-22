@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * Testa os fluxos de autenticação e cadastro de usuários, utilizando mocks
  * para simular a interação com a interface gráfica e banco de dados SQLite.
  */
-public class LoginControllerTest {
+public class LoginControllerDubleTest {
 
     /** Mock do banco de dados SQLite. */
     @Mock
