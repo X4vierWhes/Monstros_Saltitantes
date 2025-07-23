@@ -19,6 +19,25 @@ Geração de Pontos e Persistência: Pontos atribuídos ao usuário são registr
 
 Condições de Finalização: Simulação termina quando um guardião e apenas uma criatura permanecem, ou após um número fixo de interações (ticks).
 
+## 🧠 Lógica da Simulação
+
+- As **Criaturas** se movem horizontalmente e pulam usando um sistema de física com timers.
+- Uma criatura pode **roubar parte do ouro** de uma vizinha próxima quando estiver autorizada a se mover.
+- Quando duas ou mais criaturas se sobrepõem, **formam um cluster** somando seus valores.
+- Um **Guardião** é adicionado no início da simulação e absorve clusters próximos.
+- A simulação termina quando:
+  - Restam apenas um guardião e uma criatura.
+  - Um número máximo de interações é atingido (`maxInteration`).
+  - O jogador atinge ou não o objetivo de pontos (500).
+
+## 🧩 Componentes
+
+- **Creature**: Representa uma entidade simples com movimento, ouro e possibilidade de roubo.
+- **Guardian**: Um tipo especial de Creature que absorve clusters.
+- **CreaturesPanel**: Painel gráfico principal que controla a renderização, timers e lógica de interação.
+- **User**: Contador de pontos e histórico de simulações.
+- **SQLite**: Interface para persistência de dados do usuário.
+
 ## 🎨 Visualização
 
 - Criaturas: Azul
