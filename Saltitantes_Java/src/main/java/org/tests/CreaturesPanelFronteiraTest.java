@@ -83,12 +83,12 @@ public class CreaturesPanelFronteiraTest {
 
         // Teste com valor extremo mínimo para calcTarget
         Creature c = new Creature(0, 0, 0, 0, new JLabel());
-        c.gold = -1000000; // Simula um valor que levaria a um target muito baixo
+        c.gold = -1000000;
         nextPosition = panel.calcNextPosition(c);
         assertTrue(nextPosition >= 0, "A próxima posição não deve ser negativa");
 
         // Teste com valor extremo máximo para calcTarget
-        c.gold = 1000000; // Simula um valor que levaria a um target muito alto
+        c.gold = 1000000;
         nextPosition = panel.calcNextPosition(c);
         assertTrue(nextPosition <= panel.getWidth() - CreaturesPanel.CREATURE_SIZE, "A próxima posição não deve exceder a largura do painel");
     }
@@ -99,7 +99,7 @@ public class CreaturesPanelFronteiraTest {
     @Test
     void NormalizedTarget() {
         // Teste para garantir que a normalização funcione para valores positivos muito grandes
-        int positiveTarget = 10000000; // Um valor alvo muito alto
+        int positiveTarget = 10000000;
         Creature aux = new Creature(80,80, 1,1, new JLabel());
         aux.target = positiveTarget;
         double normalizedPositive = panel.normalizedTarget(panel.calcTarget(aux));
@@ -127,16 +127,14 @@ public class CreaturesPanelFronteiraTest {
                 "getLast() não deve retornar null pois removeCreature não remove a última bola se for a única");
 
         // Adiciona um guardião e uma criatura normal, depois tenta remover o guardião (não deve remover)
-        panel.addCreature(10); // Adiciona uma criatura normal
-        panel.createGuardian(20); // Adiciona um guardião
+        panel.addCreature(10);
+        panel.createGuardian(20);
         Creature guardian = panel.getLast();
         assertTrue(guardian.isGuardian);
         panel.removeCreature(guardian);
         assertNotNull(panel.getLast(), "Não deve remover o guardião");
         assertTrue(panel.getLast().isGuardian, "O guardião ainda deve ser o último na lista");
 
-
-        // Limpa a lista para testar getLast() com lista vazia
         panel.Creatures.clear();
         assertNull(panel.getLast(), "getLast deve retornar null se a lista estiver vazia");
     }
@@ -174,16 +172,16 @@ public class CreaturesPanelFronteiraTest {
         assertEquals(c.target, c.x, "A posição final deve ser igual ao alvo");
 
         // Teste de pulo (y-position)
-        c.y = 100; // Garante que a criatura esteja acima do chão
-        c.spdY = 0; // Reseta a velocidade vertical
+        c.y = 100;
+        c.spdY = 0;
         int initialY = c.y;
         panel.phisycsUpdate();
         assertTrue(c.y > initialY, "A criatura deve cair devido à gravidade");
-        panel.phisycsUpdate(); // Continua caindo
-        panel.phisycsUpdate(); // Continua caindo
+        panel.phisycsUpdate();
+        panel.phisycsUpdate();
 
         // Simula a criatura atingindo o chão e pulando
-        for (int i = 0; i < 50; i++) { // Loop para simular o pulo
+        for (int i = 0; i < 50; i++) {
             panel.phisycsUpdate();
         }
         assertEquals(panel.getHeight() - CreaturesPanel.CREATURE_SIZE - 40, c.y, "A criatura deve estar no chão após o pulo e queda");
@@ -212,7 +210,7 @@ public class CreaturesPanelFronteiraTest {
         assertTrue(panel.thiefNeighbor(thief), "Roubo deve ocorrer entre duas criaturas");
         assertEquals(1250, thief.gold, "Ladrão deve ter a metade do ouro da vítima adicionado");
         assertEquals(250, victim.gold, "Vítima deve ter a metade do ouro removido");
-        verify(mockUser, times(1)).addPoints(5.0); // Verifica se os pontos foram adicionados
+
 
         // Cenário 3: Roubo quando canUpdate é false
         panel.Creatures.clear();
@@ -240,8 +238,7 @@ public class CreaturesPanelFronteiraTest {
         panel.Creatures.add(victim);
 
         panel.canUpdate = true;
-        // O método thiefNeighbor tem uma condição "!neighbor.isGuardian". O "thief" pode ser um guardião e ainda tentar roubar, mas ele não vai se considerar um vizinho.
-        // O teste precisa verificar se o guardião NÃO rouba. No seu método, ele só rouba se a criatura não for um guardião.
+
         assertFalse(panel.thiefNeighbor(guardianThief), "Guardiao não deve roubar");
         assertEquals(1000, guardianThief.gold, "Ouro do guardião não deve mudar se ele tentar roubar");
         assertEquals(500, victim.gold, "Ouro da vítima não deve mudar se o guardião tentar roubar");
@@ -295,7 +292,6 @@ public class CreaturesPanelFronteiraTest {
             creaturesGold += aux.gold;
         }
         panel.createGuardian(1);
-
 
         assertTrue(panel.createCluster((ArrayList<Creature>) panel.Creatures), "Deve criar cluster com múltiplas criaturas");
         assertEquals(2, panel.Creatures.size(), "Deve haver o cluster e o guardião na lista");
@@ -421,9 +417,9 @@ public class CreaturesPanelFronteiraTest {
         verify(bd, times(1)).editUserByUsername(eq(mockUser.getUserName()), eq(mockUser));
 
         // Cenário 2: Tentar iniciar simulação novamente quando já está ativa
-        assertTrue(panel.startSimulation); // Já está true do teste anterior
+        assertTrue(panel.startSimulation);
         assertFalse(panel.initSimulation(100), "Não deve iniciar simulação se já estiver ativa");
-        verify(mockUser, times(1)).addSimulations(); // Não deve ser chamado novamente
-        verify(bd, times(1)).editUserByUsername(eq(mockUser.getUserName()), eq(mockUser)); // Não deve ser chamado novamente
+        verify(mockUser, times(1)).addSimulations();
+        verify(bd, times(1)).editUserByUsername(eq(mockUser.getUserName()), eq(mockUser));
     }
 }

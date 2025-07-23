@@ -52,12 +52,12 @@ public class CreaturesPanelUserJourneyTest {
         MockitoAnnotations.initMocks(this);
         JFrame frame = new JFrame();
 
-        // --- ADICIONE ESTAS LINHAS ---
-        when(mockUser.getUserName()).thenReturn("TestUser"); // Configura o mock para retornar um nome de usuário
-        when(mockUser.getPoints()).thenReturn(0.0); // É bom inicializar os pontos também
+
+        when(mockUser.getUserName()).thenReturn("TestUser");
+        when(mockUser.getPoints()).thenReturn(0.0);
 
         randi = new Random();
-        panel = new CreaturesPanel(width, height, mockUser, bd); // Pass the mock bd
+        panel = new CreaturesPanel(width, height, mockUser, bd);
         frame.add(panel);
         frame.pack();
         int posX = randi.nextInt(width - CreaturesPanel.CREATURE_SIZE);
@@ -77,8 +77,7 @@ public class CreaturesPanelUserJourneyTest {
         if (panel.updateTimer != null && panel.updateTimer.isRunning()) {
             panel.updateTimer.stop();
         }
-        // Fechar o BD, se não for null (o mock não precisa, mas se fosse real, sim)
-        // panel.bd.close(); // Esta linha pode causar NPE se bd for mock e close não for mockado
+
         panel = null;
         randi = null;
     }
@@ -94,13 +93,12 @@ public class CreaturesPanelUserJourneyTest {
         panel.initSimulation(randi.nextInt(width - CreaturesPanel.CREATURE_SIZE));
         assertTrue(panel.startSimulation, "Simulação deve ter iniciado.");
         assertTrue(panel.getLast().isGuardian, "Guardião deve ter sido criado.");
-        verify(mockUser, times(1)).addSimulations(); // Verifica interação do User Journey
-        verify(bd, times(1)).editUserByUsername(anyString(), any(User.class)); // Agora 'anyString()' vai corresponder a "TestUser"
-
+        verify(mockUser, times(1)).addSimulations();
+        verify(bd, times(1)).editUserByUsername(anyString(), any(User.class));
 
         when(mockUser.getPoints()).thenReturn(400.0);
-        panel.updateTimer.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null)); // Força um update
-        panel.phisycsTimer.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null)); // Força um physics update
+        panel.updateTimer.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+        panel.phisycsTimer.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
 
         when(mockUser.getPoints()).thenReturn(550.0);
         panel.startSimulation = true;

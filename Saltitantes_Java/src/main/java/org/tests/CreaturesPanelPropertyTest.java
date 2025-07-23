@@ -55,15 +55,13 @@ public class CreaturesPanelPropertyTest {
         panel.bd = bd;
 
 
-        // Adiciona criaturas antes da simulação
         for (int pos : positions) {
             panel.addCreature(pos);
         }
 
-        // Inicia simulação (guardião é criado aqui)
-        panel.initSimulation(80);
 
-        // Adiciona criaturas após o guardião
+        panel.initSimulation(80); //Guardião entra aqui
+
         for (int pos : positions) {
             panel.addCreature(pos);
         }

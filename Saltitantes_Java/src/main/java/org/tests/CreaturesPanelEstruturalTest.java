@@ -220,8 +220,7 @@ public class CreaturesPanelEstruturalTest {
         panel.Creatures.add(0, victim); // Adiciona vítima antes do guardião
 
         panel.canUpdate = true;
-        // O método thiefNeighbor tem uma condição "!neighbor.isGuardian". O "thief" pode ser um guardião e ainda tentar roubar, mas ele não vai se considerar um vizinho.
-        // O teste precisa verificar se o guardião NÃO rouba. No seu método, ele só rouba se a criatura não for um guardião.
+
         assertFalse(panel.thiefNeighbor(guardian), "Um guardião não deve tentar roubar.");
     }
 
@@ -254,7 +253,6 @@ public class CreaturesPanelEstruturalTest {
         Creature guardian = panel.getLast();
         assertTrue(guardian.isGuardian);
 
-        // Adiciona uma criatura normal, não um cluster
         panel.addCreature(120);
         assertFalse(panel.checkGuardian(), "checkGuardian deve retornar false se não houver clusters para remover.");
         assertEquals(3, panel.Creatures.size(), "Nenhuma criatura deve ser removida.");
@@ -262,19 +260,17 @@ public class CreaturesPanelEstruturalTest {
 
     /**
      * Testa o método `checkCluster` cobrindo o branch `if (base.isGuardian) continue;`.
+     * O guardião NÃO deve ser considerado para formação de cluster normal
      */
     @Test
     void checkCluster_guardianSkippedBranch() {
         panel.Creatures.clear();
-        panel.addCreature(50); // Uma criatura normal
-        panel.createGuardian(100); // Um guardião
-        panel.addCreature(150); // Outra criatura normal
+        panel.addCreature(50);
+        panel.createGuardian(100);
+        panel.addCreature(150);
         // A lista agora é: [Creature, Creature, Guardian]
         panel.Creatures.getFirst().x = 0;
         panel.Creatures.get(1).x = 100;
-
-        // As criaturas normais estão muito distantes para formar cluster entre si
-        // Mas o guardião NÃO deve ser considerado para formação de cluster normal
 
         boolean clusterFormed = panel.checkCluster();
         assertFalse(clusterFormed, "Não deve formar cluster se as criaturas não colidem ou se apenas um guardião existe.");
@@ -286,18 +282,17 @@ public class CreaturesPanelEstruturalTest {
      */
     @Test
     void removeCreature_cannotRemoveBranch() {
-        // Teste 1: Apenas uma criatura
         panel.Creatures.clear();
         panel.addCreature(100);
         assertFalse(panel.removeCreature(panel.getLast()), "Não deve remover se for a única criatura.");
         assertEquals(1, panel.Creatures.size());
 
-        // Teste 2: Remover guardião
-        panel.addCreature(200); // Adiciona uma segunda criatura
-        panel.createGuardian(300); // Adiciona um guardião
+
+        panel.addCreature(200);
+        panel.createGuardian(300);
         Creature guardian = panel.getLast();
         assertFalse(panel.removeCreature(guardian), "Não deve remover o guardião.");
-        assertEquals(3, panel.Creatures.size()); // 2 normais + 1 guardião
+        assertEquals(3, panel.Creatures.size());
     }
 
     /**
@@ -350,8 +345,8 @@ public class CreaturesPanelEstruturalTest {
     void initSimulation_alreadyStartedBranch() {
         panel.startSimulation = true; // Simula que a simulação já está ativa
         assertFalse(panel.initSimulation(100), "A simulação não deve iniciar novamente.");
-        verify(mockUser, never()).addSimulations(); // Não deve chamar novamente
-        verify(bd, never()).editUserByUsername(any(), any()); // Não deve chamar novamente
+        verify(mockUser, never()).addSimulations();
+        verify(bd, never()).editUserByUsername(any(), any());
     }
 
     /**
@@ -365,21 +360,22 @@ public class CreaturesPanelEstruturalTest {
 
     /**
      * Testa o método `stopSimulation` cobrindo o branch de vitória (`user.getPoints() >= 500`).
+     * Testa condição de vitoria do simulador
      */
     @Test
     void stopSimulation_victoryBranch() {
         panel.startSimulation = true;
-        panel.user = mockUser; // Garante que estamos usando o mockUser
-        when(mockUser.getPoints()).thenReturn(600.0); // Simula pontos de vitória
-        panel.startPhisycsTimer(); // Inicia os timers para poder pará-los
+        panel.user = mockUser;
+        when(mockUser.getPoints()).thenReturn(600.0);
+        panel.startPhisycsTimer();
         panel.startUpdateTimer();
 
         assertTrue(panel.stopSimulation(), "stopSimulation deve retornar true para vitória.");
         assertFalse(panel.startSimulation, "startSimulation deve ser false após parar.");
         assertFalse(panel.phisycsTimer.isRunning(), "phisycsTimer deve estar parado.");
         assertFalse(panel.updateTimer.isRunning(), "updateTimer deve estar parado.");
-        verify(mockUser, times(1)).addSuccesSimulations(); // Chamada de vitória
-        verify(mockUser, times(1)).setPoints(eq(0.0)); // Pontos resetados
+        verify(mockUser, times(1)).addSuccesSimulations();
+        verify(mockUser, times(1)).setPoints(eq(0.0));
         verify(bd, times(1)).editUserByUsername(eq(mockUser.getUserName()), eq(mockUser));
     }
 
@@ -389,15 +385,15 @@ public class CreaturesPanelEstruturalTest {
     @Test
     void stopSimulation_defeatBranch() {
         panel.startSimulation = true;
-        panel.user = mockUser; // Garante que estamos usando o mockUser
-        when(mockUser.getPoints()).thenReturn(300.0); // Simula pontos de derrota
+        panel.user = mockUser;
+        when(mockUser.getPoints()).thenReturn(300.0);
         panel.startPhisycsTimer();
         panel.startUpdateTimer();
 
         assertFalse(panel.stopSimulation(), "stopSimulation deve retornar false para derrota.");
         assertFalse(panel.startSimulation, "startSimulation deve ser false após parar.");
-        verify(mockUser, never()).addSuccesSimulations(); // Não deve chamar vitória
-        verify(mockUser, times(1)).setPoints(eq(0.0)); // Pontos resetados
+        verify(mockUser, never()).addSuccesSimulations();
+        verify(mockUser, times(1)).setPoints(eq(0.0));
         verify(bd, times(1)).editUserByUsername(eq(mockUser.getUserName()), eq(mockUser));
     }
 
