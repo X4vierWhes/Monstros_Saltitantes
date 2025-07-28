@@ -31,19 +31,17 @@ public class SQLite {
             "totalpoints DOUBLE)";
 
     /** Conexão ativa com o banco de dados. */
-    private Connection connection;
+    private final Connection connection;
 
     /**
      * Construtor padrão. Inicializa a conexão com o banco de dados e cria a tabela de usuários, se necessário.
      */
-    public SQLite() {
-        try {
+    public SQLite() throws SQLException {
+
             connection = DriverManager.getConnection(url);
             Statement stmt = connection.createStatement();
             stmt.execute(sqlTable);
-        } catch (SQLException e) {
-            System.err.println("Não foi possível conectar ao SQL: " + e.getMessage());
-        }
+
     }
 
     /**
@@ -75,20 +73,15 @@ public class SQLite {
      * Remove um usuário do banco de dados com base no nome de usuário.
      *
      * @param username Nome de usuário a ser deletado.
-     * @return {@code true} se o usuário for removido com sucesso, {@code false} caso contrário.
      */
-    public boolean deleteUserByUsername(String username) {
-        try {
+    public void deleteUserByUsername(String username) throws SQLException {
+
             PreparedStatement delete = connection.prepareStatement(
                     "DELETE FROM users WHERE username = ?"
             );
             delete.setString(1, username);
             delete.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            System.err.println("Não foi possível deletar: " + e.getMessage());
-            return false;
-        }
+
     }
 
     /**
@@ -97,8 +90,8 @@ public class SQLite {
      * @param username Nome de usuário a ser buscado.
      * @return Instância de {@link User} se encontrado, {@code null} caso contrário.
      */
-    public User findUserByUsername(String username) {
-        try {
+    public User findUserByUsername(String username) throws SQLException {
+
             PreparedStatement find = connection.prepareStatement(
                     "SELECT * FROM users WHERE username = ?");
 
@@ -115,9 +108,7 @@ public class SQLite {
                         resultSet.getDouble("totalpoints"));
             }
 
-        } catch (SQLException e) {
-            System.err.println("Não foi possível encontrar user: " + e.getMessage());
-        }
+
         return null;
     }
 

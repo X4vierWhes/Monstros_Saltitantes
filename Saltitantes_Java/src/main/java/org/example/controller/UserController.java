@@ -7,6 +7,7 @@ import org.example.view.UserView;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 /**
  * Controlador responsável por gerenciar a tela principal do usuário após o login.
@@ -42,7 +43,7 @@ public class UserController {
      *
      * @param user Usuário autenticado no sistema.
      */
-    public UserController(User user){
+    public UserController(User user) throws SQLException {
         this.bd = new SQLite();
         this.view = new UserView(user);
         this.user = user;
@@ -78,7 +79,11 @@ public class UserController {
                 bd.close();
                 view.dispose();
                 javax.swing.SwingUtilities.invokeLater(() -> {
-                    simulation = new SimulationController(user);
+                    try {
+                        simulation = new SimulationController(user);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 });
             }
         });
@@ -90,7 +95,11 @@ public class UserController {
                 bd.close();
                 view.dispose();
                 javax.swing.SwingUtilities.invokeLater(() -> {
-                    result = new ResultController(user);
+                    try {
+                        result = new ResultController(user);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 });
             }
         });
@@ -108,12 +117,20 @@ public class UserController {
                 );
 
                 if (confirm == JOptionPane.YES_OPTION) {
-                    bd.deleteUserByUsername(user.getUserName());
+                    try {
+                        bd.deleteUserByUsername(user.getUserName());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     JOptionPane.showMessageDialog(view, "Conta deletada com sucesso.");
                     bd.close();
                     view.dispose();
                     javax.swing.SwingUtilities.invokeLater(() -> {
-                        LoginController login = new LoginController();
+                        try {
+                            LoginController login = new LoginController();
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     });
                 }
             }
@@ -126,7 +143,11 @@ public class UserController {
                 bd.close();
                 view.dispose();
                 javax.swing.SwingUtilities.invokeLater(() -> {
-                    LoginController login = new LoginController();
+                    try {
+                        LoginController login = new LoginController();
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 });
             }
         });

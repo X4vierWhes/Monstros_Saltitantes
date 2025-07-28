@@ -387,12 +387,11 @@ public class CreaturesPanel extends JPanel {
                     guardian.canMove = true;
                     guardian.canTheft = false;
                     return true;
-                }else{
-                    return false;
                 }
+                return false;
             }
-            return false;
         }
+        return false;
     }
 
     /**

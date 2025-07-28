@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 /**
  * Controlador responsável por gerenciar as ações da tela de login.
@@ -29,7 +30,7 @@ public class LoginController {
      * Construtor padrão do LoginController.
      * Inicializa a visualização, conexão com o banco de dados e os listeners dos botões.
      */
-    public LoginController() {
+    public LoginController() throws SQLException {
         bd = new SQLite();
         view = new LoginView();
         initListeners();
@@ -52,14 +53,22 @@ public class LoginController {
         view.getLoginButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                login();
+                try {
+                    login();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 
         view.getSignInButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                signIn();
+                try {
+                    signIn();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
     }
@@ -69,7 +78,7 @@ public class LoginController {
      * Caso o nome de usuário já exista, exibe uma mensagem de erro.
      * Caso contrário, insere o novo usuário no banco e exibe confirmação.
      */
-    public boolean signIn() {
+    public boolean signIn() throws SQLException {
         String userName = view.getUsernameField().getText();
         String passWord = new String(view.getPasswordField().getPassword());
         User newUser = new User(userName, passWord, "common");
@@ -90,6 +99,7 @@ public class LoginController {
                 return false;
             }
         }
+
         return false;
     }
 
@@ -99,7 +109,7 @@ public class LoginController {
      * e inicia o controlador do usuário correspondente.
      * Caso contrário, exibe mensagem de erro.
      */
-    private boolean login() {
+    private boolean login() throws SQLException {
         String userName = view.getUsernameField().getText();
         String passWord = new String(view.getPasswordField().getPassword());
         User log = bd.findUserByUsername(userName);
@@ -112,7 +122,11 @@ public class LoginController {
             bd.close();
             view.dispose();
             javax.swing.SwingUtilities.invokeLater(() -> {
-                user = new UserController(log);
+                try {
+                    user = new UserController(log);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             });
             return true;
         } else {

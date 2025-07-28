@@ -6,6 +6,7 @@ import org.example.view.ResultView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 /**
  * Controlador responsável por gerenciar as ações da tela de resultados da simulação.
@@ -34,7 +35,7 @@ public class ResultController {
      *
      * @param user Usuário logado que visualizou a simulação.
      */
-    public ResultController(User user) {
+    public ResultController(User user) throws SQLException {
         this.user = user;
         this.bd = new SQLite();
         view = new ResultView(this.user, this.bd);
@@ -54,7 +55,11 @@ public class ResultController {
                 bd.close();
                 view.dispose();
                 javax.swing.SwingUtilities.invokeLater(() -> {
-                    UserController suser = new UserController(user);
+                    try {
+                        UserController suser = new UserController(user);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 });
             }
         });

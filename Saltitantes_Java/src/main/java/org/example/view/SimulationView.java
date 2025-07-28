@@ -66,7 +66,6 @@ public class SimulationView extends JFrame {
      * @param bd Instância do banco de dados SQLite.
      */
     public SimulationView(User user, SQLite bd) {
-        try {
             this.bd = bd;
             this.user = user;
 
@@ -108,58 +107,42 @@ public class SimulationView extends JFrame {
             addQuitButton();
 
             this.setVisible(true);
-
-        } catch (Exception e) {
-            System.err.println("Erro ao inicializar SimulationView: " + e.getMessage());
-        }
     }
 
     /**
      * Cria e adiciona o botão "Voltar" que permite sair da tela de simulação.
      */
     private void addQuitButton() {
-        try {
             btnQuit = new JButton("Voltar");
             btnQuit.setBounds(WIDTH - 3 * buttonWIDTH - 60, 10, buttonWIDTH, buttonHEIGHT);
             btnQuit.setBackground(Color.BLUE);
             btnQuit.setForeground(Color.WHITE);
             creaturesPanel.add(btnQuit);
             creaturesPanel.setComponentZOrder(btnQuit, 0);
-        } catch (Exception e) {
-            System.err.println("Não foi possível adicionar o botão Voltar: " + e.getMessage());
-        }
     }
 
     /**
      * Cria e adiciona o botão "Iniciar" para iniciar a simulação.
      */
     private void addInitButton() {
-        try {
             btnInit = new JButton("Iniciar");
             btnInit.setBounds(WIDTH - buttonWIDTH - 20, 10, buttonWIDTH, buttonHEIGHT);
             btnInit.setBackground(Color.BLUE);
             btnInit.setForeground(Color.WHITE);
             creaturesPanel.add(btnInit);
             creaturesPanel.setComponentZOrder(btnInit, 0);
-        } catch (Exception e) {
-            System.err.println("Não foi possível adicionar o botão Iniciar: " + e.getMessage());
-        }
     }
 
     /**
      * Cria e adiciona o botão "Adicionar" para permitir que o usuário adicione novas criaturas.
      */
     private void addBallButton() {
-        try {
             btnAddBall = new JButton("Adicionar");
             btnAddBall.setBounds(WIDTH - 2 * buttonWIDTH - 40, 10, buttonWIDTH, buttonHEIGHT);
             btnAddBall.setBackground(Color.BLUE);
             btnAddBall.setForeground(Color.WHITE);
             creaturesPanel.add(btnAddBall);
             creaturesPanel.setComponentZOrder(btnAddBall, 0);
-        } catch (Exception e) {
-            System.err.println("Não foi possível adicionar o botão Adicionar: " + e.getMessage());
-        }
     }
 
     /**

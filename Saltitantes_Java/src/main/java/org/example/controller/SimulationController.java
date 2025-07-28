@@ -6,6 +6,7 @@ import org.example.view.SimulationView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 /**
  * Controlador responsável por gerenciar a lógica da simulação de criaturas.
@@ -36,11 +37,15 @@ public class SimulationController {
      *
      * @param user Usuário que está executando a simulação.
      */
-    public SimulationController(User user) {
+    public SimulationController(User user) throws SQLException {
         this.user = user;
         this.bd = new SQLite();
         this.view = new SimulationView(user, this.bd);
         initListeners();
+        view.getCreaturesPanel().getLast();
+        view.getCreaturesPanel().update();
+        view.getCreaturesPanel().phisycsUpdate();
+        view.getCreaturesPanel().checkGuardian();
         view.getCreaturesPanel().addCreature(view.getRandomX());
         view.getCreaturesPanel().startPhisycsTimer();
     }
@@ -77,7 +82,11 @@ public class SimulationController {
 
                 view.dispose();
                 javax.swing.SwingUtilities.invokeLater(() -> {
-                    UserController userController = new UserController(user);
+                    try {
+                        UserController userController = new UserController(user);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 });
             }
         });

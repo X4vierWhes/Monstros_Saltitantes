@@ -17,6 +17,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import static org.mockito.Mockito.*;
 
@@ -81,7 +82,7 @@ public class LoginControllerDubleTest {
      */
     @Test
     @DisplayName("Teste de LOGIN bem sucedido")
-    void loginSuccess() {
+    void loginSuccess() throws SQLException {
         String username = "teste";
         String password = "1234";
         User user = new User(username, password, "dog");
@@ -106,7 +107,7 @@ public class LoginControllerDubleTest {
      */
     @Test
     @DisplayName("Teste de LOGIN que nao deu certo")
-    void failureLogin() {
+    void failureLogin() throws SQLException {
         String username = "teste";
         String password = "1234";
 
@@ -160,7 +161,7 @@ public class LoginControllerDubleTest {
      */
     @Test
     @DisplayName("Falha ao registrar novo usuario - Nome de usuário já existe")
-    void failureSign_UsernameExists() {
+    void failureSign_UsernameExists() throws SQLException {
         String username = "usuarioExistente";
         String password = "senhaQualquer";
         User existingUser = new User(username, "outraSenha", "common");
@@ -192,7 +193,7 @@ public class LoginControllerDubleTest {
      */
     @Test
     @DisplayName("Falha ao registrar novo usuario - Campos vazios")
-    void failureSign_EmptyFields() {
+    void failureSign_EmptyFields() throws SQLException {
         String username = "";
         String password = "";
 

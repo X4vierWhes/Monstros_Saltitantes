@@ -142,9 +142,6 @@ public class UserView extends JFrame {
      * @return {@code true} se o avatar foi alterado com sucesso; {@code false} se o usuário for nulo.
      */
     public boolean changeAvatar(User user){
-        if(user == null){
-            return false;
-        }
         this.user = user;
         this.remove(avatarPanel);
         this.user.changeAvatar(imgs);
