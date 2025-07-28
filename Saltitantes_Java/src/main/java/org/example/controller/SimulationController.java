@@ -42,10 +42,6 @@ public class SimulationController {
         this.bd = new SQLite();
         this.view = new SimulationView(user, this.bd);
         initListeners();
-        view.getCreaturesPanel().getLast();
-        view.getCreaturesPanel().update();
-        view.getCreaturesPanel().phisycsUpdate();
-        view.getCreaturesPanel().checkGuardian();
         view.getCreaturesPanel().addCreature(view.getRandomX());
         view.getCreaturesPanel().startPhisycsTimer();
     }
