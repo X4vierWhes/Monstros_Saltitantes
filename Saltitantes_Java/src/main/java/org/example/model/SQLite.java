@@ -87,8 +87,8 @@ public class SQLite {
             return true;
         } catch (SQLException e) {
             System.err.println("Não foi possível deletar: " + e.getMessage());
+            return false;
         }
-        return false;
     }
 
     /**
@@ -149,8 +149,8 @@ public class SQLite {
 
         } catch (SQLException e) {
             System.err.println("Não foi possível retornar nenhum usuário: " + e.getMessage());
+            return null;
         }
-        return null;
     }
 
     /**

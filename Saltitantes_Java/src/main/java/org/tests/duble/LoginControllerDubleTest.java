@@ -1,4 +1,4 @@
-package org.tests;
+package org.tests.duble;
 
 import org.example.controller.LoginController;
 import org.example.model.SQLite;

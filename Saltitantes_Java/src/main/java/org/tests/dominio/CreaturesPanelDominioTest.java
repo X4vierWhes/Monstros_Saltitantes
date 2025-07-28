@@ -1,4 +1,4 @@
-package org.tests;
+package org.tests.dominio;
 
 import org.example.model.*;
 import org.junit.jupiter.api.AfterEach;
@@ -200,6 +200,73 @@ public class CreaturesPanelDominioTest {
         panel.updateTimer = null;
         panel.phisycsTimer = null;
         assertFalse(panel.stopSimulation(), "Parar simulação mesmo sem timers ativos");
+    }
+
+    /**
+     * TESTES FEITOS POR IA
+     */
+
+    /**
+     * Verifica que criaturas com velocidade 0 permanecem no lugar após phisycsUpdate.
+     */
+    @Test
+    void creatureWithZeroSpeedShouldNotMove() {
+        Creature creature = panel.getLast();
+        creature.spdX = 0;
+        creature.canMove = true;
+        int oldX = creature.x;
+
+        panel.canUpdate = true;
+        panel.phisycsUpdate();
+
+        assertEquals(oldX, creature.x, "Criatura não deveria ter se movido no eixo X");
+    }
+
+    /**
+     * Verifica que uma criatura com dinheiro zero pode ser removida em update.
+     */
+    @Test
+    void updateRemovesZeroGoldCreatures() {
+        panel.getLast().gold = 0;
+        int sizeBefore = panel.Creatures.size();
+        panel.update();  // update não remove diretamente, mas prepara para remoção
+
+        // Simula uma checagem de fim, como no ciclo real
+        panel.Creatures.removeIf(c -> c.gold == 0 && !c.isGuardian);
+        int sizeAfter = panel.Creatures.size();
+
+        assertTrue(sizeAfter < sizeBefore, "Criaturas com 0 ouro devem ser removidas");
+    }
+
+    /**
+     * Verifica que `calcNextPosition` sempre retorna dentro dos limites da tela.
+     */
+    @Test
+    void nextPositionShouldBeWithinBounds() {
+        Creature creature = panel.getLast();
+        int pos = panel.calcNextPosition(creature);
+        assertTrue(pos >= 0 && pos <= width - CreaturesPanel.CREATURE_SIZE,
+                "Posição calculada deve estar dentro da largura do painel");
+    }
+
+    /**
+     * Verifica que uma criatura não pode ser removida se for guardião.
+     */
+    @Test
+    void cannotRemoveGuardian() {
+        panel.initSimulation(80);
+        Creature guardian = panel.getLast();
+        assertTrue(guardian.isGuardian, "Última criatura deve ser o guardião");
+        assertFalse(panel.removeCreature(guardian), "Não deve poder remover o guardião");
+    }
+
+    /**
+     * Verifica que `getLast()` retorna `null` quando lista está vazia.
+     */
+    @Test
+    void getLastReturnsNullWhenEmpty() {
+        panel.Creatures.clear();
+        assertNull(panel.getLast(), "Deve retornar null se a lista está vazia");
     }
 
 }

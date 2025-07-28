@@ -38,9 +38,6 @@ public class User {
     /** Total de simulações bem-sucedidas pelo usuário. */
     private int SUCCESS_SIMULATIONS;
 
-    /** Flag que indica se o usuário é administrador. */
-    private boolean isAdm = false;
-
     /** Índice do avatar atual (usado para troca sequencial). */
     private static int index = 0;
 
@@ -123,11 +120,8 @@ public class User {
      *
      * @return Taxa de sucesso como valor entre 0.0 e 1.0.
      */
-    public float getSuccesRate() {
-        if (SUCCESS_SIMULATIONS == 0 || SIMULATIONS == 0) {
-            return 0.0f;
-        }
-        return (float) this.SUCCESS_SIMULATIONS / this.SIMULATIONS;
+    public float getSuccessRate() {
+        return (SUCCESS_SIMULATIONS == 0 || SIMULATIONS == 0) ? 0.0f : (float) this.SUCCESS_SIMULATIONS / this.SIMULATIONS;
     }
 
     /** @return Nome do avatar associado ao usuário. */

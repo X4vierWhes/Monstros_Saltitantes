@@ -1,4 +1,4 @@
-package org.tests;
+package org.tests.propriedade;
 
 import org.example.model.Creature;
 import org.example.model.CreaturesPanel;

@@ -110,7 +110,7 @@ public class ResultView extends JFrame {
         successLabel.setForeground(color);
         this.add(successLabel);
 
-        JLabel successrateLabel = new JLabel("Rating: " + user.getSuccesRate());
+        JLabel successrateLabel = new JLabel("Rating: " + user.getSuccessRate());
         successrateLabel.setBounds(labelX, startY + spacing * 3, 300, 25);
         successrateLabel.setForeground(color);
         this.add(successrateLabel);
@@ -127,7 +127,7 @@ public class ResultView extends JFrame {
                         u.getUserName() +
                                 " | Sims: " + u.getSIMULATIONS() +
                                 " | Sucesso: " + u.getSUCCESS_SIMULATIONS() +
-                                " | Rating: " + u.getSuccesRate() +
+                                " | Rating: " + u.getSuccessRate() +
                                 " | Pontos: " + u.getTotalPoints()
                 );
                 label.setForeground(Color.WHITE);

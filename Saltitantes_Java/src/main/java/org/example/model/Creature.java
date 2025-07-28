@@ -30,7 +30,7 @@ public class Creature {
     public int spdY = 0;
 
     /** Velocidade horizontal da criatura (usada na movimentação para o alvo). */
-    int spdX = 0;
+    public int spdX = 0;
 
     /** Quantidade de ouro que a criatura possui. */
     public double gold = 1000000;

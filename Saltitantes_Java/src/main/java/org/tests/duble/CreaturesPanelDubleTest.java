@@ -1,4 +1,4 @@
-package org.tests;
+package org.tests.duble;
 
 import org.example.model.CreaturesPanel;
 import org.example.model.SQLite;
@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class CreaturesPanelUserJourneyTest {
+public class CreaturesPanelDubleTest {
 
     /** Painel a ser testado. */
     private CreaturesPanel panel;

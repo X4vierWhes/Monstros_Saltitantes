@@ -1,4 +1,4 @@
-package org.tests;
+package org.tests.fronteira;
 
 import org.example.model.Creature;
 import org.example.model.CreaturesPanel;
@@ -12,9 +12,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;

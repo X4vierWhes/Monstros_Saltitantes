@@ -1,8 +1,7 @@
-package org.tests;
+package org.tests.estrutural;
 
 import org.example.model.Creature;
 import org.example.model.CreaturesPanel;
-import org.example.model.Guardian;
 import org.example.model.SQLite;
 import org.example.model.User;
 import org.junit.jupiter.api.AfterEach;
@@ -13,9 +12,7 @@ import org.mockito.MockitoAnnotations;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent; // Necessário para simular eventos de Timer
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;

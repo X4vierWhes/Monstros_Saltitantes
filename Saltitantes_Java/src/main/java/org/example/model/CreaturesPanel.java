@@ -304,7 +304,7 @@ public class CreaturesPanel extends JPanel {
                 }
 
                 for (Creature creature : snapshot) {
-                    // Atualização vertical (PULO) se nao for cluster
+                    // Atualização vertical (PULO)
 
                     creature.spdY += grav;
                     creature.y += creature.spdY;
@@ -496,10 +496,11 @@ public class CreaturesPanel extends JPanel {
                 bd.editUserByUsername(user.getUserName(), user);
                 createGuardian(randomX);
                 startUpdateTimer();
+
                 if (phisycsTimer == null){
                     startPhisycsTimer();
-                    System.err.println("teste");
                 }
+
                 return true;
             }
             return false;
@@ -532,7 +533,7 @@ public class CreaturesPanel extends JPanel {
         }
         System.err.println(user.getSIMULATIONS() + " / " + user.getPoints() + " / " + user.getSUCCESS_SIMULATIONS());
         user.setPoints(0.0);
-        //JOptionPane.showMessageDialog(this, msg);
+        JOptionPane.showMessageDialog(this, msg);
         bd.editUserByUsername(user.getUserName(), user);
         return ret;
     }
