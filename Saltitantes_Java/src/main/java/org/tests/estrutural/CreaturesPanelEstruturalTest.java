@@ -54,7 +54,7 @@ public class CreaturesPanelEstruturalTest {
         frame.pack();
         int posX = randi.nextInt(width - CreaturesPanel.CREATURE_SIZE);
         panel.addCreature(posX);
-        // Não é necessário calcular 'target' no setUp para todos os testes estruturais
+
     }
 
     /**
