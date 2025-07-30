@@ -564,7 +564,7 @@ public class CreaturesPanel extends JPanel {
     }
 
     public void setLabelText(Creature aux){
-        aux.label.setText("R$ " + (aux.gold / 1000));
+        aux.label.setText("OURO: " + (aux.gold / 1000));
         this.add(aux.label);
         this.setComponentZOrder(aux.label, 0);
     }
